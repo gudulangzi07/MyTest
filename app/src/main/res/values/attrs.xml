@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="MyButton">
-
+        <attr name="myButtonXRadius" format="dimension"/>
+        <attr name="myButtonYRadius" format="dimension"/>
+        <attr name="myButtonBackgroud" format="color"/>
+        <attr name="myButtonTextColor" format="color"/>
+        <attr name="myButtonTextSize" format="dimension"/>
     </declare-styleable>
 </resources>
