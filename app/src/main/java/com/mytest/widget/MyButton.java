@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.widget.Button;
 
@@ -44,6 +46,7 @@ public class MyButton extends Button {
         super(context, attrs, defStyleAttr, defStyleRes);
 
         paint = new Paint();
+        paint.setAntiAlias(true);//消除锯齿
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MyButton);
 
@@ -60,13 +63,22 @@ public class MyButton extends Button {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-//        getWidth();
-//        getHeight();
-//        getLeft();
-//        getRight();
-//
-//        RectF rectF = new RectF();
-//        rectF.set();
-//        canvas.drawRect();
+        int width = getWidth();
+        int height = getHeight();
+
+        paint.setStyle(Paint.Style.FILL);//设置实心
+        paint.setColor(Color.RED);
+
+        RectF rectF = new RectF();
+        rectF.set(0, 0, width, height);
+        canvas.drawRoundRect(rectF, 20, 20, paint);
+
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(3);
+        paint.setTextSize(80);
+
+        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+        float baseline = (rectF.bottom + rectF.top - fontMetrics.bottom - fontMetrics.top) / 2;
+        canvas.drawText(getText().toString(), rectF.centerX(), baseline,  paint);
     }
 }
