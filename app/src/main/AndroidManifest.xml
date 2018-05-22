@@ -15,6 +15,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".activity.PolygonsActivity"/>
+        <activity android:name=".activity.GameActivity"/>
+        <activity android:name=".fivegame.FiveGameActivity"/>
     </application>
 
 </manifest>

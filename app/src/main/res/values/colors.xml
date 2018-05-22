@@ -4,7 +4,11 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="color_myButtonBackgroudDefault">#D1D1D1</color>
+    <color name="color_myButtonBackgroundDefault">#D1D1D1</color>
     <color name="color_myButtonTextColorDefault">#000000</color>
 
+    <color name="one">#c3e3e5</color>
+    <color name="two">#85cdd4</color>
+    <color name="three">#48afb6</color>
+    <color name="four">#22737b</color>
 </resources>

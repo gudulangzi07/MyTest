@@ -1,14 +1,14 @@
 package com.mytest.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.widget.Button;
+import android.view.View;
 
 import com.mytest.R;
 
@@ -19,7 +19,7 @@ import com.mytest.R;
  * @Description: 自定义的按钮
  * @version: 1.0
  */
-public class MyButton extends Button {
+public class MyButton extends View {
 
     private int xRadius;//默认的圆角宽度
     private int yRadius;//默认的圆角高度
@@ -38,13 +38,7 @@ public class MyButton extends Button {
     }
 
     public MyButton(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
-
-    @SuppressLint("NewApi")
-    public MyButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-
+        super(context, attrs, defStyleAttr);
         paint = new Paint();
         paint.setAntiAlias(true);//消除锯齿
 
@@ -52,12 +46,13 @@ public class MyButton extends Button {
 
         xRadius = typedArray.getDimensionPixelSize(R.styleable.MyButton_myButtonXRadius, 0);
         yRadius = typedArray.getDimensionPixelSize(R.styleable.MyButton_myButtonYRadius, 0);
-        myButtonBackgroud = typedArray.getColor(R.styleable.MyButton_myButtonBackgroud, context.getColor(R.color.color_myButtonBackgroudDefault));
-        myButtonTextColor = typedArray.getColor(R.styleable.MyButton_myButtonTextColor, context.getColor(R.color.color_myButtonTextColorDefault));
+        myButtonBackgroud = typedArray.getColor(R.styleable.MyButton_myButtonBackground, ContextCompat.getColor(context, R.color.color_myButtonBackgroundDefault));
+        myButtonTextColor = typedArray.getColor(R.styleable.MyButton_myButtonTextColor, ContextCompat.getColor(context, R.color.color_myButtonTextColorDefault));
         myButtonTextSize = typedArray.getDimensionPixelSize(R.styleable.MyButton_myButtonTextSize, context.getResources().getDimensionPixelSize(R.dimen.myButtonTextSize));
 
         typedArray.recycle();
     }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -77,8 +72,6 @@ public class MyButton extends Button {
         paint.setStrokeWidth(3);
         paint.setTextSize(80);
 
-        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
-        float baseline = (rectF.bottom + rectF.top - fontMetrics.bottom - fontMetrics.top) / 2;
-        canvas.drawText(getText().toString(), rectF.centerX(), baseline,  paint);
+
     }
 }
