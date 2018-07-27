@@ -11,4 +11,6 @@
     <color name="two">#85cdd4</color>
     <color name="three">#48afb6</color>
     <color name="four">#22737b</color>
+
+    <color name="color_ffffff">#ffffff</color>
 </resources>
