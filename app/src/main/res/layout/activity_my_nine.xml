@@ -4,7 +4,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.mytest.widget.MyNineView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.mytest.widget.MyNineView
+            android:id="@+id/myNineView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="开始合成"
+        android:textColor="@color/color_ffffff"
+        android:textSize="@dimen/myButtonTextSize" />
 </LinearLayout>
