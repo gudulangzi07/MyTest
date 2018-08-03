@@ -4,4 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="myButtonTextSize">12dp</dimen>
+
+    <dimen name="font_8">8sp</dimen>
+    <dimen name="font_9">9sp</dimen>
+    <dimen name="font_10">10sp</dimen>
 </resources>

@@ -20,6 +20,7 @@
         <activity android:name=".activity.GameActivity"/>
         <activity android:name=".fivegame.FiveGameActivity"/>
         <activity android:name=".activity.MyNineActivity"/>
+        <activity android:name=".activity.MyTimeActivity"/>
     </application>
 
 </manifest>

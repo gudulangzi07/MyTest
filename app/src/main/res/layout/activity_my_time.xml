@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:customs="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.mytest.widget.MyClockView
+        android:id="@+id/clockView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        customs:dayTextBackground="@drawable/time_bg"
+        customs:dayTextColor="#ffffff"
+        customs:dayTextSize="@dimen/font_10"
+        customs:hourTextBackground="@drawable/time_bg"
+        customs:hourTextColor="#ffffff"
+        customs:hourTextSize="@dimen/font_10"
+        customs:minTextBackground="@drawable/time_bg"
+        customs:minTextColor="#ffffff"
+        customs:minTextSize="@dimen/font_10"
+        customs:secTextBackground="@drawable/time_bg"
+        customs:secTextColor="#ffffff"
+        customs:secTextSize="@dimen/font_10" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="开始倒计时"
+        android:textColor="@color/color_000000"
+        android:textSize="@dimen/myButtonTextSize"/>
+</LinearLayout>
