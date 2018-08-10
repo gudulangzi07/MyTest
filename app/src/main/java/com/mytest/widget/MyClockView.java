@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -38,10 +39,10 @@ public class MyClockView extends RelativeLayout {
 
     public void initView(Context context, AttributeSet attrs) {
         TypedArray tArray = context.obtainStyledAttributes(attrs, R.styleable.MyClock);
-        dayTextSize = tArray.getDimensionPixelSize(R.styleable.MyClock_dayTextSize, 26);
-        hourTextSize = tArray.getDimensionPixelSize(R.styleable.MyClock_hourTextSize, 26);
-        minTextSize = tArray.getDimensionPixelSize(R.styleable.MyClock_minTextSize, 26);
-        secTextSize = tArray.getDimensionPixelSize(R.styleable.MyClock_secTextSize, 26);
+        dayTextSize = tArray.getDimensionPixelSize(R.styleable.MyClock_dayTextSize, (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+        hourTextSize = tArray.getDimensionPixelSize(R.styleable.MyClock_hourTextSize, (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+        minTextSize = tArray.getDimensionPixelSize(R.styleable.MyClock_minTextSize, (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+        secTextSize = tArray.getDimensionPixelSize(R.styleable.MyClock_secTextSize, (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
         int dayTextColor = tArray.getColor(R.styleable.MyClock_dayTextColor, 0xffffff);
         int hourTextColor = tArray.getColor(R.styleable.MyClock_hourTextColor, 0xffffff);
         int minTextColor = tArray.getColor(R.styleable.MyClock_minTextColor, 0xffffff);

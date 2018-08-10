@@ -31,4 +31,13 @@
         android:text="开始倒计时"
         android:textColor="@color/color_000000"
         android:textSize="@dimen/myButtonTextSize"/>
+
+    <TextView
+        android:id="@+id/tv_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_48afb6"
+        android:padding="10dp"
+        android:textSize="@dimen/font_10"
+        android:textColor="@color/color_000000"/>
 </LinearLayout>

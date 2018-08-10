@@ -4,14 +4,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mytest.R;
 import com.mytest.widget.MyClockView;
+import com.mytest.widget.TextViewUtil;
 
 public class MyTimeActivity extends AppCompatActivity implements MyClockView.DownCountTimerListener{
 
     private MyClockView clockView;
+    private TextView tv_1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,6 +30,10 @@ public class MyTimeActivity extends AppCompatActivity implements MyClockView.Dow
                 clockView.startDownCountTimer();
             }
         });
+
+        tv_1 = findViewById(R.id.tv_1);
+
+        new TextViewUtil(tv_1, getString(R.string.tv_run), 200);
     }
 
     @Override

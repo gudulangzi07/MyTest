@@ -51,6 +51,14 @@
             android:text="跳转到MyTimeActivity"
             android:textAllCaps="false"
             android:layout_margin="10dp"/>
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="跳转到MoveActivity"
+            android:textAllCaps="false"
+            android:layout_margin="10dp"/>
     </LinearLayout>
 
 </ScrollView>

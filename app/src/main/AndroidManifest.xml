@@ -21,6 +21,7 @@
         <activity android:name=".fivegame.FiveGameActivity"/>
         <activity android:name=".activity.MyNineActivity"/>
         <activity android:name=".activity.MyTimeActivity"/>
+        <activity android:name=".activity.MoveActivity"/>
     </application>
 
 </manifest>
