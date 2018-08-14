@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.mytest.widget.TimeLineView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        app:markerSize="6dp"
+        app:marker="@drawable/time_line"
+        app:endLine="@color/color_000000"
+        app:lineSize="0.5dp"
+        app:oritation="false"/>
+
+    <com.mytest.widget.TimeLineView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        app:markerSize="6dp"
+        app:marker="@drawable/time_line"
+        app:beginLine="@color/color_000000"
+        app:endLine="@color/color_000000"
+        app:lineSize="0.5dp"
+        app:oritation="false"/>
+
+    <com.mytest.widget.TimeLineView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        app:markerSize="6dp"
+        app:marker="@drawable/time_line"
+        app:beginLine="@color/color_000000"
+        app:endLine="@color/color_000000"
+        app:lineSize="0.5dp"
+        app:oritation="false"/>
+
+    <com.mytest.widget.TimeLineView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        app:markerSize="6dp"
+        app:marker="@drawable/time_line"
+        app:beginLine="@color/color_000000"
+        app:lineSize="0.5dp"
+        app:oritation="false"/>
+</LinearLayout>

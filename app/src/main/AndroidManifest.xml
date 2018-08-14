@@ -22,6 +22,7 @@
         <activity android:name=".activity.MyNineActivity"/>
         <activity android:name=".activity.MyTimeActivity"/>
         <activity android:name=".activity.MoveActivity"/>
+        <activity android:name=".activity.TimeLineActivity"/>
     </application>
 
 </manifest>

@@ -23,4 +23,22 @@
         <attr name="secTextBackground" format="reference|color" />
     </declare-styleable>
 
+    <declare-styleable name="TimeLine">
+        <!--圆点大小-->
+        <attr name="markerSize" format="dimension" />
+        <!--圆点颜色或者图片-->
+        <attr name="marker" format="color|reference" />
+        <!--上面线段颜色或者图片-->
+        <attr name="beginLine" format="color|reference" />
+        <!--下面线段颜色或者图片-->
+        <attr name="endLine" format="color|reference" />
+        <!--线段粗细-->
+        <attr name="lineSize" format="dimension" />
+        <!--横向还是竖向-->
+        <attr name="oritation" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="WatchStyle">
+
+    </declare-styleable>
 </resources>
