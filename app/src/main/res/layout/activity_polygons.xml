@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.mytest.widget.Polygonsview
@@ -10,4 +11,25 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="5dp"/>
+
+    <com.mytest.widget.rating.RatingStarView
+        android:id="@+id/rsv_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:paddingTop="2dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:layout_marginTop="8dp"
+        app:cornerRadius="10dp"
+        app:starMargin="5dp"
+        app:strokeWidth="0px"
+        app:strokeColor="#DB6958"
+        app:starForegroundColor="#DB6958"
+        app:starBackgroundColor="#E8E8E8"
+        app:starNum="5"
+        app:rating="1.5"
+        app:enableSelectRating="true"
+        app:starThickness="0.6"
+        app:drawStrokeForEmptyStar="false"
+        app:drawStrokeForHalfStar="false" />
 </LinearLayout>

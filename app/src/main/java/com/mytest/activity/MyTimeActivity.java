@@ -18,6 +18,8 @@ public class MyTimeActivity extends AppCompatActivity implements MyClockView.Dow
     private MyClockView clockView;
     private MyWatchView myWatchView;
     private TextView tv_1;
+    private Handler handler;
+    private Runnable runnable;
 
     private float secondDegrees;
     private float minuteDegrees;
@@ -46,14 +48,14 @@ public class MyTimeActivity extends AppCompatActivity implements MyClockView.Dow
         new TextViewUtil(tv_1, getString(R.string.tv_run), 200);
 
         myWatchView = findViewById(R.id.myWatch);
-        final Handler handler = new Handler();
-        final Runnable runnable = new Runnable() {
+        handler = new Handler();
+        runnable = new Runnable() {
             @Override
             public void run() {
                 if (seconds == 59){
                     seconds = 0;
                     minuteDegrees += 6;
-                    if (minutes == 59){
+                    if (minutes == 12){
                         minutes = 0;
                         hourDegrees += 6;
                     }else {
@@ -81,6 +83,12 @@ public class MyTimeActivity extends AppCompatActivity implements MyClockView.Dow
         myWatchView.setHourDegrees(0);
         myWatchView.setMinuteDegrees(0);
         myWatchView.setSecondDegrees(0);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runnable);
     }
 
     @Override

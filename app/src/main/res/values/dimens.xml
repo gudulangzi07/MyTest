@@ -5,6 +5,8 @@
 
     <dimen name="myButtonTextSize">12dp</dimen>
 
+    <dimen name="myRadius">90dp</dimen>
+
     <dimen name="font_8">8sp</dimen>
     <dimen name="font_9">9sp</dimen>
     <dimen name="font_10">10sp</dimen>

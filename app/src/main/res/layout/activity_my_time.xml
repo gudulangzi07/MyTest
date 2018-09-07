@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:customs="http://schemas.android.com/apk/res-auto"
+    xmlns:myapp="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,18 +10,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        customs:dayTextBackground="@drawable/time_bg"
-        customs:dayTextColor="#ffffff"
-        customs:dayTextSize="@dimen/font_10"
-        customs:hourTextBackground="@drawable/time_bg"
-        customs:hourTextColor="#ffffff"
-        customs:hourTextSize="@dimen/font_10"
-        customs:minTextBackground="@drawable/time_bg"
-        customs:minTextColor="#ffffff"
-        customs:minTextSize="@dimen/font_10"
-        customs:secTextBackground="@drawable/time_bg"
-        customs:secTextColor="#ffffff"
-        customs:secTextSize="@dimen/font_10" />
+        myapp:dayTextBackground="@drawable/time_bg"
+        myapp:dayTextColor="#ffffff"
+        myapp:dayTextSize="@dimen/font_10"
+        myapp:hourTextBackground="@drawable/time_bg"
+        myapp:hourTextColor="#ffffff"
+        myapp:hourTextSize="@dimen/font_10"
+        myapp:minTextBackground="@drawable/time_bg"
+        myapp:minTextColor="#ffffff"
+        myapp:minTextSize="@dimen/font_10"
+        myapp:secTextBackground="@drawable/time_bg"
+        myapp:secTextColor="#ffffff"
+        myapp:secTextSize="@dimen/font_10" />
 
     <Button
         android:id="@+id/button"
@@ -36,7 +36,11 @@
         android:id="@+id/myWatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"/>
+        android:layout_margin="20dp"
+        myapp:mWatchRadius="@dimen/myRadius"
+        myapp:mWatchStrokeWidth="1dp"
+        myapp:mWatchLongLine="20dp"
+        myapp:mWatchShortLine="8dp"/>
 
     <TextView
         android:id="@+id/tv_1"

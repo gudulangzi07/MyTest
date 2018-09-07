@@ -14,8 +14,7 @@ public class MyTextView extends TextView {
     Paint mPaint;
 
     public MyTextView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initPaint();
+        this(context, attrs, 0);
     }
 
     public MyTextView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -25,7 +24,6 @@ public class MyTextView extends TextView {
 
     public MyTextView(Context context) {
         this(context, null);
-        initPaint();
     }
 
     private void initPaint() {

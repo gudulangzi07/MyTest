@@ -16,9 +16,9 @@ public class MyWatchView extends View {
 
     private Paint mPaint;
     private int mRadius = 180;//默认的半径
-    private final float mStrokeWidth = 2;
-    private final int mLongLine = 20;//长线
-    private final int mShortLine = 10;//短线
+    private int mStrokeWidth = 2;
+    private int mLongLine = 20;//长线
+    private int mShortLine = 10;//短线
 
     private float hourDegrees = 0;
     private float minuteDegrees = 0;
@@ -46,6 +46,11 @@ public class MyWatchView extends View {
     private void init(Context context, @Nullable AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.WatchStyle);
 
+        mRadius = typedArray.getDimensionPixelSize(R.styleable.WatchStyle_mWatchRadius, 180);
+        mStrokeWidth = typedArray.getDimensionPixelSize(R.styleable.WatchStyle_mWatchStrokeWidth, 2);
+        mLongLine = typedArray.getDimensionPixelSize(R.styleable.WatchStyle_mWatchLongLine, 20);
+        mShortLine = typedArray.getDimensionPixelSize(R.styleable.WatchStyle_mWatchShortLine, 10);
+
         typedArray.recycle();
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -67,19 +72,17 @@ public class MyWatchView extends View {
         int height = heightMeasureSpec;
 
         if (widthSpecMode == MeasureSpec.AT_MOST && heightSpecMode == MeasureSpec.AT_MOST) {
-            width = 2 * (int) (mRadius + mStrokeWidth);
-            height = 2 * (int) (mRadius + mStrokeWidth);
+            width = 2 * (mRadius + mStrokeWidth);
+            height = 2 * (mRadius + mStrokeWidth);
         } else if (widthSpecMode == MeasureSpec.AT_MOST) {
             width = heightSpecSize;
             height = heightSpecSize;
-
-            mRadius = (int) (width / 2 - mStrokeWidth);
         } else if (heightSpecMode == MeasureSpec.AT_MOST) {
             width = widthSpecSize;
             height = widthSpecSize;
-
-            mRadius = (int) (width / 2 - mStrokeWidth);
         }
+
+        mRadius = Math.min(width, height) / 2 - mStrokeWidth;
 
         setMeasuredDimension(width, height);
     }

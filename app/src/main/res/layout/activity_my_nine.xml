@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -26,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="30dp"
-            android:src="@drawable/white_chess" />
+            app:srcCompat="@drawable/white_chess" />
 
         <ImageView
             android:id="@+id/iv_2"
@@ -34,7 +35,7 @@
             android:layout_height="wrap_content"
             android:padding="30dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/white_chess" />
+            app:srcCompat="@drawable/white_chess" />
 
         <ImageView
             android:id="@+id/iv_3"
@@ -42,7 +43,7 @@
             android:layout_height="wrap_content"
             android:padding="30dp"
             android:layout_alignParentRight="true"
-            android:src="@drawable/white_chess" />
+            app:srcCompat="@drawable/white_chess" />
 
         <ImageView
             android:id="@+id/iv_4"
@@ -50,7 +51,7 @@
             android:layout_height="wrap_content"
             android:padding="30dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/white_chess" />
+            app:srcCompat="@drawable/white_chess" />
 
         <ImageView
             android:id="@+id/iv_5"
@@ -58,7 +59,7 @@
             android:layout_height="wrap_content"
             android:padding="30dp"
             android:layout_centerInParent="true"
-            android:src="@drawable/white_chess" />
+            app:srcCompat="@drawable/white_chess" />
 
         <ImageView
             android:id="@+id/iv_6"
@@ -67,7 +68,7 @@
             android:padding="30dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/white_chess" />
+            app:srcCompat="@drawable/white_chess" />
 
         <ImageView
             android:id="@+id/iv_7"
@@ -75,7 +76,7 @@
             android:layout_height="wrap_content"
             android:padding="30dp"
             android:layout_alignParentBottom="true"
-            android:src="@drawable/white_chess" />
+            app:srcCompat="@drawable/white_chess" />
 
         <ImageView
             android:id="@+id/iv_8"
@@ -84,7 +85,7 @@
             android:padding="30dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/white_chess" />
+            app:srcCompat="@drawable/white_chess" />
 
         <ImageView
             android:id="@+id/iv_9"
@@ -93,7 +94,7 @@
             android:padding="30dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:src="@drawable/white_chess" />
+            app:srcCompat="@drawable/white_chess" />
 
     </RelativeLayout>
 

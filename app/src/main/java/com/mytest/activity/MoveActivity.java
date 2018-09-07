@@ -1,6 +1,5 @@
 package com.mytest.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -70,7 +69,7 @@ public class MoveActivity extends AppCompatActivity implements View.OnTouchListe
     /**
      * 返回屏幕的宽度
      */
-    public static int getScreenWidth(Activity activity) {
+    public static int getScreenWidth(AppCompatActivity activity) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
         return displayMetrics.widthPixels;
@@ -80,7 +79,7 @@ public class MoveActivity extends AppCompatActivity implements View.OnTouchListe
      * 返回屏幕可用高度
      * 当显示了虚拟按键时，会自动减去虚拟按键高度
      */
-    public static int getAvailableScreenHeight(Activity activity) {
+    public static int getAvailableScreenHeight(AppCompatActivity activity) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics.heightPixels;
