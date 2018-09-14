@@ -24,6 +24,8 @@
         <activity android:name=".activity.MoveActivity"/>
         <activity android:name=".activity.TimeLineActivity"/>
         <activity android:name=".activity.EventPassActivity"/>
+        <activity android:name=".activity.ChangeSurfaceViewActivity"/>
+        <activity android:name=".activity.TwoSurfaceViewActivity"/>
     </application>
 
 </manifest>
