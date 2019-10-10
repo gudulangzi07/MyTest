@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class EventView extends android.support.v7.widget.AppCompatTextView {
+public class EventView extends androidx.appcompat.widget.AppCompatTextView {
     private static final String TAG = EventView.class.getSimpleName();
 
     public EventView(Context context) {
