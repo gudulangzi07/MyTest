@@ -21,8 +21,6 @@ import com.mytest.R;
 
 import java.util.ArrayList;
 
-import static android.graphics.Canvas.CLIP_SAVE_FLAG;
-
 public class RatingStarView extends View implements View.OnClickListener {
     private static final String TAG = "RatingStarView";
     private static final int DEFAULT_STAR_HEIGHT = 32;
@@ -357,7 +355,7 @@ public class RatingStarView extends View implements View.OnClickListener {
 
         // layer 2
         RectF rectF = star.getOuterRect();
-        canvas.saveLayerAlpha(rectF.left, rectF.top, rectF.right, rectF.bottom, 0xff, CLIP_SAVE_FLAG);
+        canvas.saveLayerAlpha(rectF.left, rectF.top, rectF.right, rectF.bottom, 0xff, Canvas.ALL_SAVE_FLAG);
         RectF clip = new RectF(star.getOuterRect());
         clip.right = dividerX;
         canvas.clipRect(clip);

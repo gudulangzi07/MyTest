@@ -26,6 +26,7 @@
         <activity android:name=".activity.EventPassActivity"/>
         <activity android:name=".activity.ChangeSurfaceViewActivity"/>
         <activity android:name=".activity.TwoSurfaceViewActivity"/>
+        <activity android:name=".mvvm.activity.MVVMActivity"/>
     </application>
 
 </manifest>

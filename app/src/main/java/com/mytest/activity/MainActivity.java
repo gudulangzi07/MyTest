@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.mytest.R;
+import com.mytest.mvvm.activity.MVVMActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -82,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, TwoSurfaceViewActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        findViewById(R.id.button10).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MVVMActivity.class);
                 startActivity(intent);
             }
         });
