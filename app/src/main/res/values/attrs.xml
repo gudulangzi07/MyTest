@@ -65,4 +65,11 @@
         <attr name="enableSelectRating" format="boolean" />
         <attr name="onlyHalfStar" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="CircleProgress">
+        <attr name="circleColor" format="color|reference" />
+        <attr name="arcColor" format="color|reference" />
+        <attr name="maxProgress" format="float|reference"/>
+        <attr name="progress" format="float|reference"/>
+    </declare-styleable>
 </resources>

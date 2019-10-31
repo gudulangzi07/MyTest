@@ -1,9 +1,11 @@
 package com.mytest.mvvm.activity;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -15,26 +17,32 @@ import com.mytest.mvvm.vmodel.ToolBarViewModel;
 
 public class MVVMActivity extends AppCompatActivity {
 
-    private ActivityMvvmBinding mvvmBinding;
-    private MVVMViewModel viewModel;
+    private ActivityMvvmBinding activityMvvmBinding;
+
     private ToolBarViewModel toolBarViewModel;
-    private MVVMAdapter mAdapter;
+    private MVVMViewModel mvvmViewModel;
+
+    private MVVMAdapter mvvmAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mvvmBinding = DataBindingUtil.setContentView(this, R.layout.activity_mvvm);
-        viewModel = new MVVMViewModel(this);
+        activityMvvmBinding = DataBindingUtil.setContentView(this, R.layout.activity_mvvm);
+
+        activityMvvmBinding.toolbar.setNavigationOnClickListener(view-> finish());
+
         toolBarViewModel = new ToolBarViewModel();
-        mvvmBinding.setViewModel(viewModel);
-        mvvmBinding.setToolBarModel(toolBarViewModel);
+        mvvmViewModel = new MVVMViewModel(this);
+        activityMvvmBinding.setToolBarModel(toolBarViewModel);
+        activityMvvmBinding.setViewModel(mvvmViewModel);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mvvmBinding.recyclerView.setLayoutManager(linearLayoutManager);
 
-        mAdapter = new MVVMAdapter(this);
-        mvvmBinding.recyclerView.setAdapter(mAdapter);
 
+        // 初始化RecyclerView
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        activityMvvmBinding.recyclerView.setLayoutManager(layoutManager);
+        mvvmAdapter = new MVVMAdapter(this);
+        activityMvvmBinding.recyclerView.setAdapter(mvvmAdapter);
     }
+
 }
