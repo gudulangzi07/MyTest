@@ -6,10 +6,6 @@
         <variable
             name="toolBarModel"
             type="com.mytest.mvvm.vmodel.ToolBarViewModel"/>
-
-        <variable
-            name="viewModel"
-            type="com.mytest.mvvm.vmodel.MVVMViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

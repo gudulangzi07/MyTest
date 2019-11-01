@@ -12,7 +12,15 @@ public class MVVMViewModel {
     }
 
     public void insertData(MVVMDB mvvmdb){
-        AppDatabase.getInstance(mActivity).getMVVMDao().insertData(mvvmdb);
+        AppDatabase.getInstance(mActivity)
+                .getMVVMDao()
+                .insertData(mvvmdb);
+    }
+
+    public void getData(int page, int pageSize){
+        AppDatabase.getInstance(mActivity)
+                .getMVVMDao()
+                .getDataPage(page, pageSize);
     }
 
 }
