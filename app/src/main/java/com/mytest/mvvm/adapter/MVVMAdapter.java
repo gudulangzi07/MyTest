@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mytest.R;
+import com.mytest.databinding.ItemMvvmBinding;
 import com.mytest.mvvm.model.MVVMModel;
 
 import java.util.List;
@@ -30,13 +31,14 @@ public class MVVMAdapter extends RecyclerView.Adapter<MVVMAdapter.MyViewHolder> 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        ItemMVVMBinding itemMVVMBinding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_mvvm, false);
-        return null;
+        ItemMvvmBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_mvvm, parent, false);
+        return new MyViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
+        holder.itemBinding.setViewModel(mLists.get(position));
+        holder.itemBinding.executePendingBindings();
     }
 
     @Override
@@ -46,10 +48,11 @@ public class MVVMAdapter extends RecyclerView.Adapter<MVVMAdapter.MyViewHolder> 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-//        ItemMVVMBinding itemMVVMBinding;
+        ItemMvvmBinding itemBinding;
 
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
+        public MyViewHolder(ItemMvvmBinding binding) {
+            super(binding.getRoot());
+            this.itemBinding = binding;
         }
     }
 }

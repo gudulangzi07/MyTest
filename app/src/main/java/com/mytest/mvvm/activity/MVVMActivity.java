@@ -10,7 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.mytest.R;
 import com.mytest.databinding.ActivityMvvmBinding;
 import com.mytest.mvvm.adapter.MVVMAdapter;
+import com.mytest.mvvm.model.MVVMModel;
 import com.mytest.mvvm.vmodel.ToolBarViewModel;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class MVVMActivity extends AppCompatActivity {
 
@@ -35,6 +40,15 @@ public class MVVMActivity extends AppCompatActivity {
         activityMvvmBinding.recyclerView.setLayoutManager(layoutManager);
         mvvmAdapter = new MVVMAdapter(this);
         activityMvvmBinding.recyclerView.setAdapter(mvvmAdapter);
+
+        List<MVVMModel> lists = new ArrayList<>();
+        MVVMModel mvvmModel = new MVVMModel();
+        mvvmModel.setId(1L);
+        mvvmModel.setTitle("这是一个");
+        mvvmModel.setCreateTime(new Date());
+        lists.add(mvvmModel);
+
+        mvvmAdapter.setmLists(lists);
     }
 
 }
