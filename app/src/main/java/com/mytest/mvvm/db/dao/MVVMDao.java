@@ -11,7 +11,7 @@ import com.mytest.mvvm.db.model.MVVMDB;
 
 import java.util.List;
 
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 @Dao
 public interface MVVMDao {
@@ -19,15 +19,15 @@ public interface MVVMDao {
     //onConflict = OnConflictStrategy.REPLACE的意思是如果主键重复，用新的数据替换老数据
     //插入聊天记录的请求时间记录信息
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    Maybe<Long> insertData(MVVMDB mvvmdb);
+    Single<Long> insertData(MVVMDB mvvmdb);
 
     //删除请求聊天记录的请求时间记录信息
     @Delete
-    Maybe<Integer> delData(MVVMDB mvvmdb);
+    Single<Integer> delData(MVVMDB mvvmdb);
 
     //删除请求聊天记录的请求时间记录信息
     @Query("delete from mvvm_test_db where id = :id")
-    Maybe<Integer> delDataById(Long id);
+    Single<Integer> delDataById(Long id);
 
     //删除请求聊天记录的请求时间记录信息
     @Query("select * from mvvm_test_db group by id order by id LIMIT :offset, :size")
