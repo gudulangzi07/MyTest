@@ -19,7 +19,6 @@ import com.mytest.mvvm.vmodel.MVVMViewModel;
 import com.mytest.mvvm.vmodel.ToolBarViewModel;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MVVMActivity extends AppCompatActivity {
@@ -49,16 +48,7 @@ public class MVVMActivity extends AppCompatActivity {
 
         mvvmViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(MVVMViewModel.class);
         mvvmViewModel.setmActivity(this);
-
-        activityMvvmBinding.button.setOnClickListener(view -> {
-            MVVMDB mvvmdb = new MVVMDB();
-            mvvmdb.setId(System.currentTimeMillis());
-            mvvmdb.setTitle("标题" + Math.random() * 10);
-            mvvmdb.setCreateTime(new Date());
-            mvvmViewModel.insertData(mvvmdb);
-        });
-
-        System.out.println("=======================onCreate");
+        activityMvvmBinding.setMvvmViewModel(mvvmViewModel);
 
         mvvmViewModel.getData(0, 20).observe(this, mvvmdbs -> {
             List<MVVMModel> list = new ArrayList<>();
@@ -73,6 +63,14 @@ public class MVVMActivity extends AppCompatActivity {
             mvvmAdapter.setmLists(list);
             mvvmAdapter.notifyDataSetChanged();
             System.out.println("==================执行方法=");
+        });
+
+        activityMvvmBinding.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MVVMModel mvvmModel = mvvmAdapter.getItemObject(0);
+                mvvmViewModel.delDataById(mvvmModel.getId() + 1);
+            }
         });
 
     }

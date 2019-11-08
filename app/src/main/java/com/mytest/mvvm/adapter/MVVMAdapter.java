@@ -2,11 +2,11 @@ package com.mytest.mvvm.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.Observable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mytest.R;
@@ -44,6 +44,13 @@ public class MVVMAdapter extends RecyclerView.Adapter<MVVMAdapter.MyViewHolder> 
     @Override
     public int getItemCount() {
         return mLists != null ? mLists.size() : 0;
+    }
+
+    public MVVMModel getItemObject(int position){
+        if (position < 0 || position >= mLists.size()){
+            throw new RuntimeException("输入的大小不对");
+        }
+        return mLists.get(position);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{

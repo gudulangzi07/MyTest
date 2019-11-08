@@ -29,6 +29,9 @@ public interface MVVMDao {
     @Query("delete from mvvm_test_db where id = :id")
     Single<Integer> delDataById(Long id);
 
+    @Query("delete from mvvm_test_db")
+    Single<Integer> delAllData();
+
     //删除请求聊天记录的请求时间记录信息
     @Query("select * from mvvm_test_db group by id order by id LIMIT :offset, :size")
     LiveData<List<MVVMDB>> getDataPage(int offset, int size);
