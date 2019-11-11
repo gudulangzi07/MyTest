@@ -65,12 +65,9 @@ public class MVVMActivity extends AppCompatActivity {
             System.out.println("==================执行方法=");
         });
 
-        activityMvvmBinding.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MVVMModel mvvmModel = mvvmAdapter.getItemObject(0);
-                mvvmViewModel.delDataById(mvvmModel.getId() + 1);
-            }
+        activityMvvmBinding.btnDelete.setOnClickListener(view -> {
+            MVVMModel mvvmModel = mvvmAdapter.getItemObject(0);
+            mvvmViewModel.delDataById(mvvmModel.getId());
         });
 
     }
