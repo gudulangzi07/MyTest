@@ -1,14 +1,13 @@
 package com.mytest.mvvm.vmodel;
 
-import android.util.Log;
-import android.view.View;
-
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.mytest.mvvm.activity.MVVMActivity;
 import com.mytest.mvvm.db.AppDatabase;
 import com.mytest.mvvm.db.model.MVVMDB;
+import com.mytest.mvvm.model.MVVMModel;
+import com.mytest.utils.BeanUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -22,6 +21,8 @@ public class MVVMViewModel extends ViewModel {
 
     private static final String TAG = MVVMViewModel.class.getSimpleName();
 
+    private MutableLiveData<List<MVVMModel>> lists = new MutableLiveData<>();
+
     private MVVMActivity mActivity;
 
     public MVVMViewModel() {
@@ -32,9 +33,11 @@ public class MVVMViewModel extends ViewModel {
         this.mActivity = mActivity;
     }
 
-    public void insertData() {
-        Log.e(TAG, "==============insertData start===" + Thread.currentThread());
+    public MutableLiveData<List<MVVMModel>> getLists() {
+        return lists;
+    }
 
+    public void insertData() {
         MVVMDB mvvmdb = new MVVMDB();
         mvvmdb.setId(System.currentTimeMillis());
         mvvmdb.setTitle("标题" + Math.random() * 10);
@@ -54,35 +57,44 @@ public class MVVMViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(Long aLong) {
-                        System.out.println("==============insertData Success===" + Thread.currentThread());
+                        MVVMModel mvvmModel = BeanUtils.clone(mvvmdb, MVVMModel.class);
+                        lists.getValue().add(mvvmModel);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        System.out.println("==============insertData Error===" + Thread.currentThread());
                     }
                 });
 
-        Log.e(TAG, "==============insertData end===" + Thread.currentThread());
     }
 
-    public LiveData<List<MVVMDB>> getData(int page, int pageSize) {
-
-        long start = System.currentTimeMillis();
-        LiveData<List<MVVMDB>> listLiveData = AppDatabase.getInstance(mActivity)
+    public void getData(int page, int pageSize) {
+        AppDatabase.getInstance(mActivity)
                 .getMVVMDao()
-                .getDataPage(page, pageSize);
+                .getDataPage(page, pageSize)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<MVVMDB>>(){
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-        long end = System.currentTimeMillis();
+                    }
 
-        Log.e(TAG, "===============耗时：" + (end - start) +"秒");
+                    @Override
+                    public void onSuccess(List<MVVMDB> mvvmdbs) {
+                        List<MVVMModel> mvvmModels = BeanUtils.batchClone(mvvmdbs, MVVMModel.class);
+                        lists.postValue(mvvmModels);
+                    }
 
-        return listLiveData;
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
+
     }
 
     public void delData() {
-
-        long start = System.currentTimeMillis();
         AppDatabase.getInstance(mActivity)
                 .getMVVMDao()
                 .delAllData()
@@ -97,23 +109,16 @@ public class MVVMViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(Integer aLong) {
-                        Log.e(TAG, "==============delData Success===" + Thread.currentThread());
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "==============delData Error===" + Thread.currentThread());
                     }
                 });
-        long end = System.currentTimeMillis();
-
-        Log.e(TAG, "===============耗时：" + (end - start) / 100 + "秒");
 
     }
 
     public void delDataById(Long id) {
-
-        long start = System.currentTimeMillis();
         AppDatabase.getInstance(mActivity)
                 .getMVVMDao()
                 .delDataById(id)
@@ -128,20 +133,12 @@ public class MVVMViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(Integer aLong) {
-                        Log.e(TAG, "==============delDataById Success===" + Thread.currentThread());
-                        long end = System.currentTimeMillis();
-                        Log.e(TAG, "=======================" + (end - start) / 100 + "秒");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "==============delDataById Error===" + Thread.currentThread());
                     }
                 });
-        long end = System.currentTimeMillis();
-
-        Log.e(TAG, "===============耗时：" + (end - start) / 100 + "秒");
-
     }
 
 }

@@ -1,12 +1,10 @@
 package com.mytest.mvvm.activity;
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -50,19 +48,9 @@ public class MVVMActivity extends AppCompatActivity {
         mvvmViewModel.setmActivity(this);
         activityMvvmBinding.setMvvmViewModel(mvvmViewModel);
 
-        mvvmViewModel.getData(0, 20).observe(this, mvvmdbs -> {
-            List<MVVMModel> list = new ArrayList<>();
-            for (MVVMDB mvvmdb : mvvmdbs){
-                MVVMModel mvvmModel = new MVVMModel();
-                mvvmModel.setId(mvvmdb.getId());
-                mvvmModel.setTitle(mvvmdb.getTitle());
-                mvvmModel.setCreateTime(mvvmdb.getCreateTime());
-
-                list.add(mvvmModel);
-            }
-            mvvmAdapter.setmLists(list);
+        mvvmViewModel.getLists().observe(this, lists -> {
+            mvvmAdapter.setmLists(lists);
             mvvmAdapter.notifyDataSetChanged();
-            System.out.println("==================执行方法=");
         });
 
         activityMvvmBinding.btnDelete.setOnClickListener(view -> {

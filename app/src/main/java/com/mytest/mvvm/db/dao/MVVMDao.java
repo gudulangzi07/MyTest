@@ -34,5 +34,5 @@ public interface MVVMDao {
 
     //删除请求聊天记录的请求时间记录信息
     @Query("select * from mvvm_test_db group by id order by id LIMIT :offset, :size")
-    LiveData<List<MVVMDB>> getDataPage(int offset, int size);
+    Single<List<MVVMDB>> getDataPage(int offset, int size);
 }

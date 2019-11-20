@@ -8,13 +8,14 @@ import androidx.room.TypeConverters;
 
 import com.mytest.mvvm.db.converter.DateConverter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import io.reactivex.annotations.NonNull;
 
 @Entity(tableName = "mvvm_test_db", indices = {@Index("id")})
 @TypeConverters(DateConverter.class)
-public class MVVMDB {
+public class MVVMDB{
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "id")
