@@ -74,7 +74,5 @@ dependencies {
     kapt "androidx.room:room-compiler:2.2.1"
     implementation 'jivesoftware:smack:3.2.1'
     implementation 'apache-beanutils:commons-beanutils:1.7.0'
-    //noinspection DuplicatePlatformClasses
-    implementation 'commons-logging:commons-logging:1.2'
 //    implementation 'org.springframework:spring-beans:4.0.0.RELEASE'
 }

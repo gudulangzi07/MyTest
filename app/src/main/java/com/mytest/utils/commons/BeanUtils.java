@@ -1,14 +1,12 @@
-package com.mytest.utils;
+package com.mytest.utils.commons;
 
-import com.mytest.mvvm.db.model.MVVMDB;
-import com.mytest.mvvm.model.MVVMModel;
+import org.apache.commons.beanutils.BeanUtilsBean;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class BeanUtils{
+public class BeanUtils {
 
     public static <T, E> E clone(T source, Class<E> classType){
         if (source == null) {
@@ -17,7 +15,7 @@ public class BeanUtils{
         E targetInstance = null;
         try {
             targetInstance = classType.newInstance();
-            org.apache.commons.beanutils.BeanUtils.copyProperties(targetInstance, source);
+            copyProperties(source, targetInstance);
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -46,17 +44,7 @@ public class BeanUtils{
         return result;
     }
 
-    public static void main(String[] args) {
-        MVVMDB mvvmdb = new MVVMDB();
-        mvvmdb.setId(System.currentTimeMillis());
-        mvvmdb.setTitle("标题" + Math.random() * 10);
-        mvvmdb.setCreateTime(new Date());
-
-        MVVMModel mvvmModel = clone(mvvmdb, MVVMModel.class);
-
-        System.out.println("=============" + mvvmModel.getId());
-        System.out.println("=============" + mvvmModel.getTitle());
-        System.out.println("=============" + mvvmModel.getCreateTime());
+    private static void copyProperties(Object dest, Object orig) throws IllegalAccessException, InvocationTargetException {
+        BeanUtilsBean.getInstance().copyProperties(dest, orig);
     }
-
 }

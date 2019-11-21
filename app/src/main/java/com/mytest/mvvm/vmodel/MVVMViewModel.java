@@ -7,8 +7,9 @@ import com.mytest.mvvm.activity.MVVMActivity;
 import com.mytest.mvvm.db.AppDatabase;
 import com.mytest.mvvm.db.model.MVVMDB;
 import com.mytest.mvvm.model.MVVMModel;
-import com.mytest.utils.BeanUtils;
+import com.mytest.utils.beans.BeanUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 
@@ -57,8 +58,25 @@ public class MVVMViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(Long aLong) {
-                        MVVMModel mvvmModel = BeanUtils.clone(mvvmdb, MVVMModel.class);
-                        lists.getValue().add(mvvmModel);
+                        try {
+                            MVVMModel mvvmModel = MVVMModel.class.newInstance();
+                            org.apache.commons.beanutils.BeanUtils.copyProperties(mvvmdb, mvvmModel);
+                            System.out.println("==================" + mvvmModel.getId());
+                            System.out.println("==================" + mvvmModel.getTitle());
+                            System.out.println("==================" + mvvmModel.getCreateTime());
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        }
+
+//                        MVVMModel mvvmModel = BeanUtils.clone(mvvmdb, MVVMModel.class);
+//                        System.out.println("==================" + mvvmModel.getId());
+//                        System.out.println("==================" + mvvmModel.getTitle());
+//                        System.out.println("==================" + mvvmModel.getCreateTime());
+//                        lists.getValue().add(mvvmModel);
                     }
 
                     @Override
