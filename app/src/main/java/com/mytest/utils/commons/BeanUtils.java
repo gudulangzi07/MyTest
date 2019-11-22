@@ -1,7 +1,5 @@
 package com.mytest.utils.commons;
 
-import org.apache.commons.beanutils.BeanUtilsBean;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;

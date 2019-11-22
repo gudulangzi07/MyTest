@@ -1,591 +1,1154 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.mytest.utils.commons;
+
 
 import com.googlecode.openbeans.IndexedPropertyDescriptor;
 import com.googlecode.openbeans.PropertyDescriptor;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ContextClassLoaderLocal;
+import org.apache.commons.beanutils.ConversionException;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.ConvertUtilsBean;
+import org.apache.commons.beanutils.Converter;
+import org.apache.commons.beanutils.DynaBean;
+import org.apache.commons.beanutils.DynaClass;
+import org.apache.commons.beanutils.DynaProperty;
+import org.apache.commons.beanutils.MappedPropertyDescriptor;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.commons.beanutils.expression.Resolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
+/**
+ * <p>JavaBean property population methods.</p>
+ *
+ * <p>This class provides implementations for the utility methods in
+ * {@link org.apache.commons.beanutils.BeanUtils}.
+ * Different instances can be used to isolate caches between classloaders
+ * and to vary the value converters registered.</p>
+ *
+ * @version $Id$
+ * @see org.apache.commons.beanutils.BeanUtils
+ * @since 1.7
+ */
+
 public class BeanUtilsBean {
-    private static final ContextClassLoaderLocal beansByClassLoader = new ContextClassLoaderLocal() {
-        protected Object initialValue() {
-            return new BeanUtilsBean();
-        }
-    };
-    private ConvertUtilsBean convertUtilsBean;
-    private PropertyUtilsBean propertyUtilsBean;
 
-    public static synchronized BeanUtilsBean getInstance() {
-        return (BeanUtilsBean)beansByClassLoader.get();
+
+    // ------------------------------------------------------ Private Class Variables
+
+    /**
+     * Contains <code>BeanUtilsBean</code> instances indexed by context classloader.
+     */
+    private static final ContextClassLoaderLocal<BeanUtilsBean>
+            BEANS_BY_CLASSLOADER = new ContextClassLoaderLocal<BeanUtilsBean>() {
+                        // Creates the default instance used when the context classloader is unavailable
+                        @Override
+                        protected BeanUtilsBean initialValue() {
+                            return new BeanUtilsBean();
+                        }
+                    };
+
+    /**
+     * Gets the instance which provides the functionality for {@link org.apache.commons.beanutils.BeanUtils}.
+     * This is a pseudo-singleton - an single instance is provided per (thread) context classloader.
+     * This mechanism provides isolation for web apps deployed in the same container.
+     *
+     * @return The (pseudo-singleton) BeanUtils bean instance
+     */
+    public static BeanUtilsBean getInstance() {
+        return BEANS_BY_CLASSLOADER.get();
     }
 
-    public static synchronized void setInstance(BeanUtilsBean newInstance) {
-        beansByClassLoader.set(newInstance);
+    /**
+     * Sets the instance which provides the functionality for {@link org.apache.commons.beanutils.BeanUtils}.
+     * This is a pseudo-singleton - an single instance is provided per (thread) context classloader.
+     * This mechanism provides isolation for web apps deployed in the same container.
+     *
+     * @param newInstance The (pseudo-singleton) BeanUtils bean instance
+     */
+    public static void setInstance(final BeanUtilsBean newInstance) {
+        BEANS_BY_CLASSLOADER.set(newInstance);
     }
 
+    // --------------------------------------------------------- Attributes
+
+    /**
+     * Logging for this instance
+     */
+    private final Log log = LogFactory.getLog(org.apache.commons.beanutils.BeanUtils.class);
+
+    /** Used to perform conversions between object types when setting properties */
+    private final ConvertUtilsBean convertUtilsBean;
+
+    /** Used to access properties*/
+    private final PropertyUtilsBean propertyUtilsBean;
+
+    /** A reference to Throwable's initCause method, or null if it's not there in this JVM */
+    private static final Method INIT_CAUSE_METHOD = getInitCauseMethod();
+
+    // --------------------------------------------------------- Constuctors
+
+    /**
+     * <p>Constructs an instance using new property
+     * and conversion instances.</p>
+     */
     public BeanUtilsBean() {
         this(new ConvertUtilsBean(), new PropertyUtilsBean());
     }
 
-    public BeanUtilsBean(ConvertUtilsBean convertUtilsBean, PropertyUtilsBean propertyUtilsBean) {
+    /**
+     * <p>Constructs an instance using given conversion instances
+     * and new {@link PropertyUtilsBean} instance.</p>
+     *
+     * @param convertUtilsBean use this <code>ConvertUtilsBean</code>
+     * to perform conversions from one object to another
+     *
+     * @since 1.8.0
+     */
+    public BeanUtilsBean(final ConvertUtilsBean convertUtilsBean) {
+        this(convertUtilsBean, new PropertyUtilsBean());
+    }
+
+    /**
+     * <p>Constructs an instance using given property and conversion instances.</p>
+     *
+     * @param convertUtilsBean use this <code>ConvertUtilsBean</code>
+     * to perform conversions from one object to another
+     * @param propertyUtilsBean use this <code>PropertyUtilsBean</code>
+     * to access properties
+     */
+    public BeanUtilsBean(
+                            final ConvertUtilsBean convertUtilsBean,
+                            final PropertyUtilsBean propertyUtilsBean) {
+
         this.convertUtilsBean = convertUtilsBean;
         this.propertyUtilsBean = propertyUtilsBean;
     }
 
-    public Object cloneBean(Object bean) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-//        if (this.log.isDebugEnabled()) {
-//            this.log.debug("Cloning bean: " + bean.getClass().getName());
-//        }
+    // --------------------------------------------------------- Public Methods
 
-        Class clazz = bean.getClass();
+    /**
+     * <p>Clone a bean based on the available property getters and setters,
+     * even if the bean class itself does not implement Cloneable.</p>
+     *
+     * <p>
+     * <strong>Note:</strong> this method creates a <strong>shallow</strong> clone.
+     * In other words, any objects referred to by the bean are shared with the clone
+     * rather than being cloned in turn.
+     * </p>
+     *
+     * @param bean Bean to be cloned
+     * @return the cloned bean
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InstantiationException if a new instance of the bean's
+     *  class cannot be instantiated
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public Object cloneBean(final Object bean)
+            throws IllegalAccessException, InstantiationException,
+            InvocationTargetException, NoSuchMethodException {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Cloning bean: " + bean.getClass().getName());
+        }
         Object newBean = null;
         if (bean instanceof DynaBean) {
-            newBean = ((DynaBean)bean).getDynaClass().newInstance();
+            newBean = ((DynaBean) bean).getDynaClass().newInstance();
         } else {
             newBean = bean.getClass().newInstance();
         }
+        getPropertyUtils().copyProperties(newBean, bean);
+        return (newBean);
 
-        this.getPropertyUtils().copyProperties(newBean, bean);
-        return newBean;
     }
 
-    public void copyProperties(Object dest, Object orig) throws IllegalAccessException, InvocationTargetException {
+
+    /**
+     * <p>Copy property values from the origin bean to the destination bean
+     * for all cases where the property names are the same.  For each
+     * property, a conversion is attempted as necessary.  All combinations of
+     * standard JavaBeans and DynaBeans as origin and destination are
+     * supported.  Properties that exist in the origin bean, but do not exist
+     * in the destination bean (or are read-only in the destination bean) are
+     * silently ignored.</p>
+     *
+     * <p>If the origin "bean" is actually a <code>Map</code>, it is assumed
+     * to contain String-valued <strong>simple</strong> property names as the keys, pointing at
+     * the corresponding property values that will be converted (if necessary)
+     * and set in the destination bean. <strong>Note</strong> that this method
+     * is intended to perform a "shallow copy" of the properties and so complex
+     * properties (for example, nested ones) will not be copied.</p>
+     *
+     * <p>This method differs from <code>populate()</code>, which
+     * was primarily designed for populating JavaBeans from the map of request
+     * parameters retrieved on an HTTP request, is that no scalar->indexed
+     * or indexed->scalar manipulations are performed.  If the origin property
+     * is indexed, the destination property must be also.</p>
+     *
+     * <p>If you know that no type conversions are required, the
+     * <code>copyProperties()</code> method in {@link PropertyUtils} will
+     * execute faster than this method.</p>
+     *
+     * <p><strong>FIXME</strong> - Indexed and mapped properties that do not
+     * have getter and setter methods for the underlying array or Map are not
+     * copied by this method.</p>
+     *
+     * @param dest Destination bean whose properties are modified
+     * @param orig Origin bean whose properties are retrieved
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws IllegalArgumentException if the <code>dest</code> or
+     *  <code>orig</code> argument is null or if the <code>dest</code>
+     *  property type is different from the source type and the relevant
+     *  converter has not been registered.
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     */
+    public void copyProperties(final Object dest, final Object orig)
+        throws IllegalAccessException, InvocationTargetException {
+
+        // Validate existence of the specified beans
         if (dest == null) {
-            throw new IllegalArgumentException("No destination bean specified");
-        } else if (orig == null) {
+            throw new IllegalArgumentException
+                    ("No destination bean specified");
+        }
+        if (orig == null) {
             throw new IllegalArgumentException("No origin bean specified");
-        } else {
-//            if (this.log.isDebugEnabled()) {
-//                this.log.debug("BeanUtils.copyProperties(" + dest + ", " + orig + ")");
-//            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("BeanUtils.copyProperties(" + dest + ", " +
+                      orig + ")");
+        }
 
-            int i;
-            String name;
-            Object value;
-            if (orig instanceof DynaBean) {
-                DynaProperty[] origDescriptors = ((DynaBean)orig).getDynaClass().getDynaProperties();
-
-                for(i = 0; i < origDescriptors.length; ++i) {
-                    name = origDescriptors[i].getName();
-                    if (this.getPropertyUtils().isWriteable(dest, name)) {
-                        value = ((DynaBean)orig).get(name);
-                        this.copyProperty(dest, name, value);
-                    }
+        // Copy the properties, converting as necessary
+        if (orig instanceof DynaBean) {
+            final DynaProperty[] origDescriptors =
+                ((DynaBean) orig).getDynaClass().getDynaProperties();
+            for (DynaProperty origDescriptor : origDescriptors) {
+                final String name = origDescriptor.getName();
+                // Need to check isReadable() for WrapDynaBean
+                // (see Jira issue# BEANUTILS-61)
+                if (getPropertyUtils().isReadable(orig, name) &&
+                    getPropertyUtils().isWriteable(dest, name)) {
+                    final Object value = ((DynaBean) orig).get(name);
+                    copyProperty(dest, name, value);
                 }
-            } else if (orig instanceof Map) {
-                Iterator names = ((Map)orig).keySet().iterator();
-
-                while(names.hasNext()) {
-                    String name1 = (String)names.next();
-                    if (this.getPropertyUtils().isWriteable(dest, name1)) {
-                        Object value1 = ((Map)orig).get(name1);
-                        this.copyProperty(dest, name1, value1);
-                    }
+            }
+        } else if (orig instanceof Map) {
+            @SuppressWarnings("unchecked")
+            final
+            // Map properties are always of type <String, Object>
+            Map<String, Object> propMap = (Map<String, Object>) orig;
+            for (final Map.Entry<String, Object> entry : propMap.entrySet()) {
+                final String name = entry.getKey();
+                if (getPropertyUtils().isWriteable(dest, name)) {
+                    copyProperty(dest, name, entry.getValue());
                 }
-            } else {
-                PropertyDescriptor[] origDescriptors = this.getPropertyUtils().getPropertyDescriptors(orig);
-
-                for(i = 0; i < origDescriptors.length; ++i) {
-                    name = origDescriptors[i].getName();
-                    if (!"class".equals(name) && this.getPropertyUtils().isReadable(orig, name) && this.getPropertyUtils().isWriteable(dest, name)) {
-                        try {
-                            value = this.getPropertyUtils().getSimpleProperty(orig, name);
-                            this.copyProperty(dest, name, value);
-                        } catch (NoSuchMethodException var7) {
-                        }
+            }
+        } else /* if (orig is a standard JavaBean) */ {
+            final PropertyDescriptor[] origDescriptors =
+                getPropertyUtils().getPropertyDescriptors(orig);
+            for (PropertyDescriptor origDescriptor : origDescriptors) {
+                final String name = origDescriptor.getName();
+                if ("class".equals(name)) {
+                    continue; // No point in trying to set an object's class
+                }
+                if (getPropertyUtils().isReadable(orig, name) &&
+                    getPropertyUtils().isWriteable(dest, name)) {
+                    try {
+                        final Object value =
+                            getPropertyUtils().getSimpleProperty(orig, name);
+                        copyProperty(dest, name, value);
+                    } catch (final NoSuchMethodException e) {
+                        // Should not happen
                     }
                 }
             }
-
         }
+
     }
 
-    public void copyProperty(Object bean, String name, Object value) throws IllegalAccessException, InvocationTargetException {
-//        if (this.log.isTraceEnabled()) {
-//            StringBuffer sb = new StringBuffer("  copyProperty(");
-//            sb.append(bean);
-//            sb.append(", ");
-//            sb.append(name);
-//            sb.append(", ");
-//            if (value == null) {
-//                sb.append("<NULL>");
-//            } else if (value instanceof String) {
-//                sb.append((String)value);
-//            } else if (!(value instanceof String[])) {
-//                sb.append(value.toString());
-//            } else {
-//                String[] values = (String[])value;
-//                sb.append('[');
-//
-//                for(int i = 0; i < values.length; ++i) {
-//                    if (i > 0) {
-//                        sb.append(',');
-//                    }
-//
-//                    sb.append(values[i]);
-//                }
-//
-//                sb.append(']');
-//            }
-//
-//            sb.append(')');
-//            this.log.trace(sb.toString());
-//        }
 
+    /**
+     * <p>Copy the specified property value to the specified destination bean,
+     * performing any type conversion that is required.  If the specified
+     * bean does not have a property of the specified name, or the property
+     * is read only on the destination bean, return without
+     * doing anything.  If you have custom destination property types, register
+     * {@link Converter}s for them by calling the <code>register()</code>
+     * method of {@link ConvertUtils}.</p>
+     *
+     * <p><strong>IMPLEMENTATION RESTRICTIONS</strong>:</p>
+     * <ul>
+     * <li>Does not support destination properties that are indexed,
+     *     but only an indexed setter (as opposed to an array setter)
+     *     is available.</li>
+     * <li>Does not support destination properties that are mapped,
+     *     but only a keyed setter (as opposed to a Map setter)
+     *     is available.</li>
+     * <li>The desired property type of a mapped setter cannot be
+     *     determined (since Maps support any data type), so no conversion
+     *     will be performed.</li>
+     * </ul>
+     *
+     * @param bean Bean on which setting is to be performed
+     * @param name Property name (can be nested/indexed/mapped/combo)
+     * @param value Value to be set
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     */
+    public void copyProperty(final Object bean, String name, Object value)
+        throws IllegalAccessException, InvocationTargetException {
+
+        // Trace logging (if enabled)
+        if (log.isTraceEnabled()) {
+            final StringBuilder sb = new StringBuilder("  copyProperty(");
+            sb.append(bean);
+            sb.append(", ");
+            sb.append(name);
+            sb.append(", ");
+            if (value == null) {
+                sb.append("<NULL>");
+            } else if (value instanceof String) {
+                sb.append((String) value);
+            } else if (value instanceof String[]) {
+                final String[] values = (String[]) value;
+                sb.append('[');
+                for (int i = 0; i < values.length; i++) {
+                    if (i > 0) {
+                        sb.append(',');
+                    }
+                    sb.append(values[i]);
+                }
+                sb.append(']');
+            } else {
+                sb.append(value.toString());
+            }
+            sb.append(')');
+            log.trace(sb.toString());
+        }
+
+        // Resolve any nested expression to get the actual target bean
         Object target = bean;
-        int delim = name.lastIndexOf(46);
-        if (delim >= 0) {
+        final Resolver resolver = getPropertyUtils().getResolver();
+        while (resolver.hasNested(name)) {
             try {
-                target = this.getPropertyUtils().getProperty(bean, name.substring(0, delim));
-            } catch (NoSuchMethodException var19) {
-                return;
+                target = getPropertyUtils().getProperty(target, resolver.next(name));
+                name = resolver.remove(name);
+            } catch (final NoSuchMethodException e) {
+                return; // Skip this property setter
             }
-
-            name = name.substring(delim + 1);
-//            if (this.log.isTraceEnabled()) {
-//                this.log.trace("    Target bean = " + target);
-//                this.log.trace("    Target name = " + name);
-//            }
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("    Target bean = " + target);
+            log.trace("    Target name = " + name);
         }
 
-        String propName = null;
-        Class type = null;
-        int index = -1;
-        String key = null;
-        propName = name;
-        int i = name.indexOf(91);
-        int j;
-        if (i >= 0) {
-            j = name.indexOf(93);
+        // Declare local variables we will require
+        final String propName = resolver.getProperty(name); // Simple name of target property
+        Class<?> type = null;                         // Java type of target property
+        final int index  = resolver.getIndex(name);         // Indexed subscript value (if any)
+        final String key = resolver.getKey(name);           // Mapped key value (if any)
 
-            try {
-                index = Integer.parseInt(propName.substring(i + 1, j));
-            } catch (NumberFormatException var18) {
-            }
-
-            propName = name.substring(0, i);
-        }
-
-        j = propName.indexOf(40);
-        if (j >= 0) {
-            int k = propName.indexOf(41);
-
-            try {
-                key = propName.substring(j + 1, k);
-            } catch (IndexOutOfBoundsException var17) {
-            }
-
-            propName = propName.substring(0, j);
-        }
-
+        // Calculate the target property type
         if (target instanceof DynaBean) {
-            DynaClass dynaClass = ((DynaBean)target).getDynaClass();
-            DynaProperty dynaProperty = dynaClass.getDynaProperty(propName);
+            final DynaClass dynaClass = ((DynaBean) target).getDynaClass();
+            final DynaProperty dynaProperty = dynaClass.getDynaProperty(propName);
             if (dynaProperty == null) {
-                return;
+                return; // Skip this property setter
             }
-
-            type = dynaProperty.getType();
+            type = dynaPropertyType(dynaProperty, value);
         } else {
             PropertyDescriptor descriptor = null;
-
             try {
-                descriptor = this.getPropertyUtils().getPropertyDescriptor(target, name);
+                descriptor =
+                    getPropertyUtils().getPropertyDescriptor(target, name);
                 if (descriptor == null) {
-                    return;
+                    return; // Skip this property setter
                 }
-            } catch (NoSuchMethodException var20) {
-                return;
+            } catch (final NoSuchMethodException e) {
+                return; // Skip this property setter
             }
-
             type = descriptor.getPropertyType();
             if (type == null) {
-//                if (this.log.isTraceEnabled()) {
-//                    this.log.trace("    target type for property '" + propName + "' is null, so skipping ths setter");
-//                }
-
+                // Most likely an indexed setter on a POJB only
+                if (log.isTraceEnabled()) {
+                    log.trace("    target type for property '" +
+                              propName + "' is null, so skipping ths setter");
+                }
                 return;
             }
         }
+        if (log.isTraceEnabled()) {
+            log.trace("    target propName=" + propName + ", type=" +
+                      type + ", index=" + index + ", key=" + key);
+        }
 
-//        if (this.log.isTraceEnabled()) {
-//            this.log.trace("    target propName=" + propName + ", type=" + type + ", index=" + index + ", key=" + key);
-//        }
-
-        Converter converter;
-        if (index >= 0) {
-            converter = this.getConvertUtils().lookup(type.getComponentType());
-            if (converter != null) {
-//                this.log.trace("        USING CONVERTER " + converter);
-                value = converter.convert(type, value);
-            }
-
+        // Convert the specified value to the required type and store it
+        if (index >= 0) {                    // Destination must be indexed
+            value = convertForCopy(value, type.getComponentType());
             try {
-                this.getPropertyUtils().setIndexedProperty(target, propName, index, value);
-            } catch (NoSuchMethodException var16) {
-                throw new InvocationTargetException(var16, "Cannot set " + propName);
+                getPropertyUtils().setIndexedProperty(target, propName,
+                                                 index, value);
+            } catch (final NoSuchMethodException e) {
+                throw new InvocationTargetException
+                    (e, "Cannot set " + propName);
             }
-        } else if (key != null) {
+        } else if (key != null) {            // Destination must be mapped
+            // Maps do not know what the preferred data type is,
+            // so perform no conversions at all
+            // FIXME - should we create or support a TypedMap?
             try {
-                this.getPropertyUtils().setMappedProperty(target, propName, key, value);
-            } catch (NoSuchMethodException var15) {
-                throw new InvocationTargetException(var15, "Cannot set " + propName);
+                getPropertyUtils().setMappedProperty(target, propName,
+                                                key, value);
+            } catch (final NoSuchMethodException e) {
+                throw new InvocationTargetException
+                    (e, "Cannot set " + propName);
             }
-        } else {
-            converter = this.getConvertUtils().lookup(type);
-            if (converter != null) {
-//                this.log.trace("        USING CONVERTER " + converter);
-                value = converter.convert(type, value);
-            }
-
+        } else {                             // Destination must be simple
+            value = convertForCopy(value, type);
             try {
-                this.getPropertyUtils().setSimpleProperty(target, propName, value);
-            } catch (NoSuchMethodException var14) {
-                throw new InvocationTargetException(var14, "Cannot set " + propName);
+                getPropertyUtils().setSimpleProperty(target, propName, value);
+            } catch (final NoSuchMethodException e) {
+                throw new InvocationTargetException
+                    (e, "Cannot set " + propName);
             }
         }
 
     }
 
-    public Map describe(Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+    /**
+     * <p>Return the entire set of properties for which the specified bean
+     * provides a read method. This map contains the to <code>String</code>
+     * converted property values for all properties for which a read method
+     * is provided (i.e. where the getReadMethod() returns non-null).</p>
+     *
+     * <p>This map can be fed back to a call to
+     * <code>BeanUtils.populate()</code> to reconsitute the same set of
+     * properties, modulo differences for read-only and write-only
+     * properties, but only if there are no indexed properties.</p>
+     *
+     * <p><strong>Warning:</strong> if any of the bean property implementations
+     * contain (directly or indirectly) a call to this method then
+     * a stack overflow may result. For example:
+     * <code><pre>
+     * class MyBean
+     * {
+     *    public Map getParameterMap()
+     *    {
+     *         BeanUtils.describe(this);
+     *    }
+     * }
+     * </pre></code>
+     * will result in an infinite regression when <code>getParametersMap</code>
+     * is called. It is recommended that such methods are given alternative
+     * names (for example, <code>parametersMap</code>).
+     * </p>
+     * @param bean Bean whose properties are to be extracted
+     * @return Map of property descriptors
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public Map<String, String> describe(final Object bean)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+
         if (bean == null) {
-            return new HashMap();
+        //            return (Collections.EMPTY_MAP);
+            return (new HashMap<String, String>());
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Describing bean: " + bean.getClass().getName());
+        }
+
+        final Map<String, String> description = new HashMap<String, String>();
+        if (bean instanceof DynaBean) {
+            final DynaProperty[] descriptors =
+                ((DynaBean) bean).getDynaClass().getDynaProperties();
+            for (DynaProperty descriptor : descriptors) {
+                final String name = descriptor.getName();
+                description.put(name, getProperty(bean, name));
+            }
         } else {
-//            if (this.log.isDebugEnabled()) {
-//                this.log.debug("Describing bean: " + bean.getClass().getName());
-//            }
-
-            Map description = new HashMap();
-            int i;
-            String name;
-            if (bean instanceof DynaBean) {
-                DynaProperty[] descriptors = ((DynaBean)bean).getDynaClass().getDynaProperties();
-
-                for(i = 0; i < descriptors.length; ++i) {
-                    name = descriptors[i].getName();
-                    description.put(name, this.getProperty(bean, name));
-                }
-            } else {
-                PropertyDescriptor[] descriptors = this.getPropertyUtils().getPropertyDescriptors(bean);
-
-                for(i = 0; i < descriptors.length; ++i) {
-                    name = descriptors[i].getName();
-                    if (descriptors[i].getReadMethod() != null) {
-                        description.put(name, this.getProperty(bean, name));
-                    }
+            final PropertyDescriptor[] descriptors =
+                getPropertyUtils().getPropertyDescriptors(bean);
+            final Class<?> clazz = bean.getClass();
+            for (PropertyDescriptor descriptor : descriptors) {
+                final String name = descriptor.getName();
+                if (getPropertyUtils().getReadMethod(clazz, descriptor) != null) {
+                    description.put(name, getProperty(bean, name));
                 }
             }
-
-            return description;
         }
+        return (description);
+
     }
 
-    public String[] getArrayProperty(Object bean, String name) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object value = this.getPropertyUtils().getProperty(bean, name);
-        if (value == null) {
-            return null;
-        } else if (value instanceof Collection) {
-            ArrayList values = new ArrayList();
-            Iterator items = ((Collection)value).iterator();
 
-            while(items.hasNext()) {
-                Object item = items.next();
+    /**
+     * Return the value of the specified array property of the specified
+     * bean, as a String array.
+     *
+     * @param bean Bean whose property is to be extracted
+     * @param name Name of the property to be extracted
+     * @return The array property value
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public String[] getArrayProperty(final Object bean, final String name)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+
+        final Object value = getPropertyUtils().getProperty(bean, name);
+        if (value == null) {
+            return (null);
+        } else if (value instanceof Collection) {
+            final ArrayList<String> values = new ArrayList<String>();
+            for (final Object item : (Collection<?>) value) {
                 if (item == null) {
-                    values.add((String)null);
+                    values.add(null);
                 } else {
-                    values.add(this.getConvertUtils().convert(item));
+                    // convert to string using convert utils
+                    values.add(getConvertUtils().convert(item));
                 }
             }
-
-            return (String[])values.toArray(new String[values.size()]);
+            return (values.toArray(new String[values.size()]));
         } else if (value.getClass().isArray()) {
-            int n = Array.getLength(value);
-            String[] results = new String[n];
-
-            for(int i = 0; i < n; ++i) {
-                Object item = Array.get(value, i);
+            final int n = Array.getLength(value);
+            final String[] results = new String[n];
+            for (int i = 0; i < n; i++) {
+                final Object item = Array.get(value, i);
                 if (item == null) {
                     results[i] = null;
                 } else {
-                    results[i] = this.getConvertUtils().convert(item);
+                    // convert to string using convert utils
+                    results[i] = getConvertUtils().convert(item);
                 }
             }
-
-            return results;
+            return (results);
         } else {
-            String[] results = new String[]{value.toString()};
-            return results;
+            final String[] results = new String[1];
+            results[0] = getConvertUtils().convert(value);
+            return (results);
         }
+
     }
 
-    public String getIndexedProperty(Object bean, String name) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object value = this.getPropertyUtils().getIndexedProperty(bean, name);
-        return this.getConvertUtils().convert(value);
+
+    /**
+     * Return the value of the specified indexed property of the specified
+     * bean, as a String.  The zero-relative index of the
+     * required value must be included (in square brackets) as a suffix to
+     * the property name, or <code>IllegalArgumentException</code> will be
+     * thrown.
+     *
+     * @param bean Bean whose property is to be extracted
+     * @param name <code>propertyname[index]</code> of the property value
+     *  to be extracted
+     * @return The indexed property's value, converted to a String
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public String getIndexedProperty(final Object bean, final String name)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+
+        final Object value = getPropertyUtils().getIndexedProperty(bean, name);
+        return (getConvertUtils().convert(value));
+
     }
 
-    public String getIndexedProperty(Object bean, String name, int index) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object value = this.getPropertyUtils().getIndexedProperty(bean, name, index);
-        return this.getConvertUtils().convert(value);
+
+    /**
+     * Return the value of the specified indexed property of the specified
+     * bean, as a String.  The index is specified as a method parameter and
+     * must *not* be included in the property name expression
+     *
+     * @param bean Bean whose property is to be extracted
+     * @param name Simple property name of the property value to be extracted
+     * @param index Index of the property value to be extracted
+     * @return The indexed property's value, converted to a String
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public String getIndexedProperty(final Object bean,
+                                            final String name, final int index)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+
+        final Object value = getPropertyUtils().getIndexedProperty(bean, name, index);
+        return (getConvertUtils().convert(value));
+
     }
 
-    public String getMappedProperty(Object bean, String name) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object value = this.getPropertyUtils().getMappedProperty(bean, name);
-        return this.getConvertUtils().convert(value);
+
+    /**
+     * Return the value of the specified indexed property of the specified
+     * bean, as a String.  The String-valued key of the required value
+     * must be included (in parentheses) as a suffix to
+     * the property name, or <code>IllegalArgumentException</code> will be
+     * thrown.
+     *
+     * @param bean Bean whose property is to be extracted
+     * @param name <code>propertyname(index)</code> of the property value
+     *  to be extracted
+     * @return The mapped property's value, converted to a String
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public String getMappedProperty(final Object bean, final String name)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+
+        final Object value = getPropertyUtils().getMappedProperty(bean, name);
+        return (getConvertUtils().convert(value));
+
     }
 
-    public String getMappedProperty(Object bean, String name, String key) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object value = this.getPropertyUtils().getMappedProperty(bean, name, key);
-        return this.getConvertUtils().convert(value);
+
+    /**
+     * Return the value of the specified mapped property of the specified
+     * bean, as a String.  The key is specified as a method parameter and
+     * must *not* be included in the property name expression
+     *
+     * @param bean Bean whose property is to be extracted
+     * @param name Simple property name of the property value to be extracted
+     * @param key Lookup key of the property value to be extracted
+     * @return The mapped property's value, converted to a String
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public String getMappedProperty(final Object bean,
+                                           final String name, final String key)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+
+        final Object value = getPropertyUtils().getMappedProperty(bean, name, key);
+        return (getConvertUtils().convert(value));
+
     }
 
-    public String getNestedProperty(Object bean, String name) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object value = this.getPropertyUtils().getNestedProperty(bean, name);
-        return this.getConvertUtils().convert(value);
+
+    /**
+     * Return the value of the (possibly nested) property of the specified
+     * name, for the specified bean, as a String.
+     *
+     * @param bean Bean whose property is to be extracted
+     * @param name Possibly nested name of the property to be extracted
+     * @return The nested property's value, converted to a String
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws IllegalArgumentException if a nested reference to a
+     *  property returns null
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public String getNestedProperty(final Object bean, final String name)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+
+        final Object value = getPropertyUtils().getNestedProperty(bean, name);
+        return (getConvertUtils().convert(value));
+
     }
 
-    public String getProperty(Object bean, String name) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        return this.getNestedProperty(bean, name);
+
+    /**
+     * Return the value of the specified property of the specified bean,
+     * no matter which property reference format is used, as a String.
+     *
+     * @param bean Bean whose property is to be extracted
+     * @param name Possibly indexed and/or nested name of the property
+     *  to be extracted
+     * @return The property's value, converted to a String
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public String getProperty(final Object bean, final String name)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+
+        return (getNestedProperty(bean, name));
+
     }
 
-    public String getSimpleProperty(Object bean, String name) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object value = this.getPropertyUtils().getSimpleProperty(bean, name);
-        return this.getConvertUtils().convert(value);
+
+    /**
+     * Return the value of the specified simple property of the specified
+     * bean, converted to a String.
+     *
+     * @param bean Bean whose property is to be extracted
+     * @param name Name of the property to be extracted
+     * @return The property's value, converted to a String
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     * @throws NoSuchMethodException if an accessor method for this
+     *  property cannot be found
+     */
+    public String getSimpleProperty(final Object bean, final String name)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+
+        final Object value = getPropertyUtils().getSimpleProperty(bean, name);
+        return (getConvertUtils().convert(value));
+
     }
 
-    public void populate(Object bean, Map properties) throws IllegalAccessException, InvocationTargetException {
-        if (bean != null && properties != null) {
-//            if (this.log.isDebugEnabled()) {
-//                this.log.debug("BeanUtils.populate(" + bean + ", " + properties + ")");
-//            }
 
-            Iterator names = properties.keySet().iterator();
+    /**
+     * <p>Populate the JavaBeans properties of the specified bean, based on
+     * the specified name/value pairs.  This method uses Java reflection APIs
+     * to identify corresponding "property setter" method names, and deals
+     * with setter arguments of type <code>String</code>, <code>boolean</code>,
+     * <code>int</code>, <code>long</code>, <code>float</code>, and
+     * <code>double</code>.  In addition, array setters for these types (or the
+     * corresponding primitive types) can also be identified.</p>
+     *
+     * <p>The particular setter method to be called for each property is
+     * determined using the usual JavaBeans introspection mechanisms.  Thus,
+     * you may identify custom setter methods using a BeanInfo class that is
+     * associated with the class of the bean itself.  If no such BeanInfo
+     * class is available, the standard method name conversion ("set" plus
+     * the capitalized name of the property in question) is used.</p>
+     *
+     * <p><strong>NOTE</strong>:  It is contrary to the JavaBeans Specification
+     * to have more than one setter method (with different argument
+     * signatures) for the same property.</p>
+     *
+     * <p><strong>WARNING</strong> - The logic of this method is customized
+     * for extracting String-based request parameters from an HTTP request.
+     * It is probably not what you want for general property copying with
+     * type conversion.  For that purpose, check out the
+     * <code>copyProperties()</code> method instead.</p>
+     *
+     * @param bean JavaBean whose properties are being populated
+     * @param properties Map keyed by property name, with the
+     *  corresponding (String or String[]) value(s) to be set
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     */
+    public void populate(final Object bean, final Map<String, ? extends Object> properties)
+        throws IllegalAccessException, InvocationTargetException {
 
-            while(names.hasNext()) {
-                String name = (String)names.next();
-                if (name != null) {
-                    Object value = properties.get(name);
-                    this.setProperty(bean, name, value);
-                }
+        // Do nothing unless both arguments have been specified
+        if ((bean == null) || (properties == null)) {
+            return;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("BeanUtils.populate(" + bean + ", " +
+                    properties + ")");
+        }
+
+        // Loop through the property name/value pairs to be set
+        for(final Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
+            // Identify the property name and value(s) to be assigned
+            final String name = entry.getKey();
+            if (name == null) {
+                continue;
             }
 
+            // Perform the assignment for this property
+            setProperty(bean, name, entry.getValue());
+
         }
+
     }
 
-    public void setProperty(Object bean, String name, Object value) throws IllegalAccessException, InvocationTargetException {
-//        if (this.log.isTraceEnabled()) {
-//            StringBuffer sb = new StringBuffer("  setProperty(");
-//            sb.append(bean);
-//            sb.append(", ");
-//            sb.append(name);
-//            sb.append(", ");
-//            if (value == null) {
-//                sb.append("<NULL>");
-//            } else if (value instanceof String) {
-//                sb.append((String)value);
-//            } else if (!(value instanceof String[])) {
-//                sb.append(value.toString());
-//            } else {
-//                String[] values = (String[])value;
-//                sb.append('[');
-//
-//                for(int i = 0; i < values.length; ++i) {
-//                    if (i > 0) {
-//                        sb.append(',');
-//                    }
-//
-//                    sb.append(values[i]);
-//                }
-//
-//                sb.append(']');
-//            }
-//
-//            sb.append(')');
-//            this.log.trace(sb.toString());
-//        }
 
+    /**
+     * <p>Set the specified property value, performing type conversions as
+     * required to conform to the type of the destination property.</p>
+     *
+     * <p>If the property is read only then the method returns
+     * without throwing an exception.</p>
+     *
+     * <p>If <code>null</code> is passed into a property expecting a primitive value,
+     * then this will be converted as if it were a <code>null</code> string.</p>
+     *
+     * <p><strong>WARNING</strong> - The logic of this method is customized
+     * to meet the needs of <code>populate()</code>, and is probably not what
+     * you want for general property copying with type conversion.  For that
+     * purpose, check out the <code>copyProperty()</code> method instead.</p>
+     *
+     * <p><strong>WARNING</strong> - PLEASE do not modify the behavior of this
+     * method without consulting with the Struts developer community.  There
+     * are some subtleties to its functionality that are not documented in the
+     * Javadoc description above, yet are vital to the way that Struts utilizes
+     * this method.</p>
+     *
+     * @param bean Bean on which setting is to be performed
+     * @param name Property name (can be nested/indexed/mapped/combo)
+     * @param value Value to be set
+     *
+     * @throws IllegalAccessException if the caller does not have
+     *  access to the property accessor method
+     * @throws InvocationTargetException if the property accessor method
+     *  throws an exception
+     */
+    public void setProperty(final Object bean, String name, final Object value)
+        throws IllegalAccessException, InvocationTargetException {
+
+        // Trace logging (if enabled)
+        if (log.isTraceEnabled()) {
+            final StringBuilder sb = new StringBuilder("  setProperty(");
+            sb.append(bean);
+            sb.append(", ");
+            sb.append(name);
+            sb.append(", ");
+            if (value == null) {
+                sb.append("<NULL>");
+            } else if (value instanceof String) {
+                sb.append((String) value);
+            } else if (value instanceof String[]) {
+                final String[] values = (String[]) value;
+                sb.append('[');
+                for (int i = 0; i < values.length; i++) {
+                    if (i > 0) {
+                        sb.append(',');
+                    }
+                    sb.append(values[i]);
+                }
+                sb.append(']');
+            } else {
+                sb.append(value.toString());
+            }
+            sb.append(')');
+            log.trace(sb.toString());
+        }
+
+        // Resolve any nested expression to get the actual target bean
         Object target = bean;
-        int delim = this.findLastNestedIndex(name);
-        if (delim >= 0) {
+        final Resolver resolver = getPropertyUtils().getResolver();
+        while (resolver.hasNested(name)) {
             try {
-                target = this.getPropertyUtils().getProperty(bean, name.substring(0, delim));
-            } catch (NoSuchMethodException var17) {
-                return;
+                target = getPropertyUtils().getProperty(target, resolver.next(name));
+                if (target == null) { // the value of a nested property is null
+                    return;
+                }
+                name = resolver.remove(name);
+            } catch (final NoSuchMethodException e) {
+                return; // Skip this property setter
             }
-
-            name = name.substring(delim + 1);
-//            if (this.log.isTraceEnabled()) {
-//                this.log.trace("    Target bean = " + target);
-//                this.log.trace("    Target name = " + name);
-//            }
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("    Target bean = " + target);
+            log.trace("    Target name = " + name);
         }
 
-        String propName = null;
-        Class type = null;
-        int index = -1;
-        String key = null;
-        propName = name;
-        int i = name.indexOf(91);
-        int j;
-        if (i >= 0) {
-            j = name.indexOf(93);
+        // Declare local variables we will require
+        final String propName = resolver.getProperty(name); // Simple name of target property
+        Class<?> type = null;                         // Java type of target property
+        final int index  = resolver.getIndex(name);         // Indexed subscript value (if any)
+        final String key = resolver.getKey(name);           // Mapped key value (if any)
 
-            try {
-                index = Integer.parseInt(propName.substring(i + 1, j));
-            } catch (NumberFormatException var16) {
-            }
-
-            propName = name.substring(0, i);
-        }
-
-        j = propName.indexOf(40);
-        if (j >= 0) {
-            int k = propName.indexOf(41);
-
-            try {
-                key = propName.substring(j + 1, k);
-            } catch (IndexOutOfBoundsException var15) {
-            }
-
-            propName = propName.substring(0, j);
-        }
-
-        PropertyDescriptor descriptor;
+        // Calculate the property type
         if (target instanceof DynaBean) {
-            DynaClass dynaClass = ((DynaBean)target).getDynaClass();
-            DynaProperty dynaProperty = dynaClass.getDynaProperty(propName);
+            final DynaClass dynaClass = ((DynaBean) target).getDynaClass();
+            final DynaProperty dynaProperty = dynaClass.getDynaProperty(propName);
             if (dynaProperty == null) {
-                return;
+                return; // Skip this property setter
             }
-
-            type = dynaProperty.getType();
+            type = dynaPropertyType(dynaProperty, value);
+            if (index >= 0 && List.class.isAssignableFrom(type)) {
+            	type = Object.class;
+            }
+        } else if (target instanceof Map) {
+            type = Object.class;
+        } else if (target != null && target.getClass().isArray() && index >= 0) {
+            type = Array.get(target, index).getClass();
         } else {
-            descriptor = null;
-
+            PropertyDescriptor descriptor = null;
             try {
-                descriptor = this.getPropertyUtils().getPropertyDescriptor(target, name);
+                descriptor =
+                    getPropertyUtils().getPropertyDescriptor(target, name);
                 if (descriptor == null) {
-                    return;
+                    return; // Skip this property setter
                 }
-            } catch (NoSuchMethodException var18) {
-                return;
+            } catch (final NoSuchMethodException e) {
+                return; // Skip this property setter
             }
-
             if (descriptor instanceof MappedPropertyDescriptor) {
-                if (((MappedPropertyDescriptor)descriptor).getMappedWriteMethod() == null) {
-//                    if (this.log.isDebugEnabled()) {
-//                        this.log.debug("Skipping read-only property");
-//                    }
-
-                    return;
+                if (((MappedPropertyDescriptor) descriptor).getMappedWriteMethod() == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping read-only property");
+                    }
+                    return; // Read-only, skip this property setter
                 }
-
-                type = ((MappedPropertyDescriptor)descriptor).getMappedPropertyType();
-            } else if (descriptor instanceof IndexedPropertyDescriptor) {
-                if (((IndexedPropertyDescriptor)descriptor).getIndexedWriteMethod() == null) {
-//                    if (this.log.isDebugEnabled()) {
-//                        this.log.debug("Skipping read-only property");
-//                    }
-
-                    return;
+                type = ((MappedPropertyDescriptor) descriptor).
+                    getMappedPropertyType();
+            } else if (index >= 0 && descriptor instanceof IndexedPropertyDescriptor) {
+                if (((IndexedPropertyDescriptor) descriptor).getIndexedWriteMethod() == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping read-only property");
+                    }
+                    return; // Read-only, skip this property setter
                 }
-
-                type = ((IndexedPropertyDescriptor)descriptor).getIndexedPropertyType();
+                type = ((IndexedPropertyDescriptor) descriptor).
+                    getIndexedPropertyType();
+            } else if (index >= 0 && List.class.isAssignableFrom(descriptor.getPropertyType())) {
+                type = Object.class;
+            } else if (key != null) {
+                if (descriptor.getReadMethod() == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping read-only property");
+                    }
+                    return; // Read-only, skip this property setter
+                }
+                type = (value == null) ? Object.class : value.getClass();
             } else {
                 if (descriptor.getWriteMethod() == null) {
-//                    if (this.log.isDebugEnabled()) {
-//                        this.log.debug("Skipping read-only property");
-//                    }
-
-                    return;
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping read-only property");
+                    }
+                    return; // Read-only, skip this property setter
                 }
-
                 type = descriptor.getPropertyType();
             }
         }
 
-        descriptor = null;
-        Object newValue;
-        if (type.isArray() && index < 0) {
-            String[] values;
+        // Convert the specified value to the required type
+        Object newValue = null;
+        if (type.isArray() && (index < 0)) { // Scalar value into array
             if (value == null) {
-                values = new String[]{(String)value};
-                newValue = this.getConvertUtils().convert((String[])values, type);
+                final String[] values = new String[1];
+                values[0] = null;
+                newValue = getConvertUtils().convert(values, type);
             } else if (value instanceof String) {
-                values = new String[]{(String)value};
-                newValue = this.getConvertUtils().convert((String[])values, type);
+                newValue = getConvertUtils().convert(value, type);
             } else if (value instanceof String[]) {
-                newValue = this.getConvertUtils().convert((String[])value, type);
+                newValue = getConvertUtils().convert((String[]) value, type);
             } else {
-                newValue = value;
+                newValue = convert(value, type);
             }
-        } else if (type.isArray()) {
+        } else if (type.isArray()) {         // Indexed value into array
+            if (value instanceof String || value == null) {
+                newValue = getConvertUtils().convert((String) value,
+                                                type.getComponentType());
+            } else if (value instanceof String[]) {
+                newValue = getConvertUtils().convert(((String[]) value)[0],
+                                                type.getComponentType());
+            } else {
+                newValue = convert(value, type.getComponentType());
+            }
+        } else {                             // Value into scalar
             if (value instanceof String) {
-                newValue = this.getConvertUtils().convert((String)value, type.getComponentType());
+                newValue = getConvertUtils().convert((String) value, type);
             } else if (value instanceof String[]) {
-                newValue = this.getConvertUtils().convert(((String[])value)[0], type.getComponentType());
+                newValue = getConvertUtils().convert(((String[]) value)[0],
+                                                type);
             } else {
-                newValue = value;
+                newValue = convert(value, type);
             }
-        } else if (!(value instanceof String) && value != null) {
-            if (value instanceof String[]) {
-                newValue = this.getConvertUtils().convert(((String[])value)[0], type);
-            } else if (this.getConvertUtils().lookup(value.getClass()) != null) {
-                newValue = this.getConvertUtils().convert(value.toString(), type);
-            } else {
-                newValue = value;
-            }
-        } else {
-            newValue = this.getConvertUtils().convert((String)value, type);
         }
 
+        // Invoke the setter method
         try {
-            if (index >= 0) {
-                this.getPropertyUtils().setIndexedProperty(target, propName, index, newValue);
-            } else if (key != null) {
-                this.getPropertyUtils().setMappedProperty(target, propName, key, newValue);
-            } else {
-                this.getPropertyUtils().setProperty(target, propName, newValue);
-            }
+          getPropertyUtils().setProperty(target, name, newValue);
+        } catch (final NoSuchMethodException e) {
+            throw new InvocationTargetException
+                (e, "Cannot set " + propName);
+        }
 
-        } catch (NoSuchMethodException var14) {
-            throw new InvocationTargetException(var14, "Cannot set " + propName);
+    }
+
+    /**
+     * Gets the <code>ConvertUtilsBean</code> instance used to perform the conversions.
+     *
+     * @return The ConvertUtils bean instance
+     */
+    public ConvertUtilsBean getConvertUtils() {
+        return convertUtilsBean;
+    }
+
+    /**
+     * Gets the <code>PropertyUtilsBean</code> instance used to access properties.
+     *
+     * @return The ConvertUtils bean instance
+     */
+    public PropertyUtilsBean getPropertyUtils() {
+        return propertyUtilsBean;
+    }
+
+    /**
+     * If we're running on JDK 1.4 or later, initialize the cause for the given throwable.
+     *
+     * @param  throwable The throwable.
+     * @param  cause     The cause of the throwable.
+     * @return  true if the cause was initialized, otherwise false.
+     * @since 1.8.0
+     */
+    public boolean initCause(final Throwable throwable, final Throwable cause) {
+        if (INIT_CAUSE_METHOD != null && cause != null) {
+            try {
+                INIT_CAUSE_METHOD.invoke(throwable, new Object[] { cause });
+                return true;
+            } catch (final Throwable e) {
+                return false; // can't initialize cause
+            }
+        }
+        return false;
+    }
+
+    /**
+     * <p>Convert the value to an object of the specified class (if
+     * possible).</p>
+     *
+     * @param value Value to be converted (may be null)
+     * @param type Class of the value to be converted to
+     * @return The converted value
+     *
+     * @throws ConversionException if thrown by an underlying Converter
+     * @since 1.8.0
+     */
+    protected Object convert(final Object value, final Class<?> type) {
+        final Converter converter = getConvertUtils().lookup(type);
+        if (converter != null) {
+            log.trace("        USING CONVERTER " + converter);
+            return converter.convert(type, value);
+        } else {
+            return value;
         }
     }
 
-    private int findLastNestedIndex(String expression) {
-        int bracketCount = 0;
+    /**
+     * Performs a type conversion of a property value before it is copied to a target
+     * bean. This method delegates to {@link #convert(Object, Class)}, but <b>null</b>
+     * values are not converted. This causes <b>null</b> values to be copied verbatim.
+     *
+     * @param value the value to be converted and copied
+     * @param type the target type of the conversion
+     * @return the converted value
+     */
+    private Object convertForCopy(final Object value, final Class<?> type) {
+        return (value != null) ? convert(value, type) : value;
+    }
 
-        for(int i = expression.length() - 1; i >= 0; --i) {
-            char at = expression.charAt(i);
-            switch(at) {
-                case '(':
-                case '[':
-                    --bracketCount;
-                    break;
-                case ')':
-                case ']':
-                    ++bracketCount;
-                    break;
-                case '.':
-                    if (bracketCount < 1) {
-                        return i;
-                    }
+    /**
+     * Returns a <code>Method<code> allowing access to
+     * {@link Throwable#initCause(Throwable)} method of {@link Throwable},
+     * or <code>null</code> if the method
+     * does not exist.
+     *
+     * @return A <code>Method<code> for <code>Throwable.initCause</code>, or
+     * <code>null</code> if unavailable.
+     */
+    private static Method getInitCauseMethod() {
+        try {
+            final Class<?>[] paramsClasses = new Class<?>[] { Throwable.class };
+            return Throwable.class.getMethod("initCause", paramsClasses);
+        } catch (final NoSuchMethodException e) {
+            final Log log = LogFactory.getLog(org.apache.commons.beanutils.BeanUtils.class);
+            if (log.isWarnEnabled()) {
+                log.warn("Throwable does not have initCause() method in JDK 1.3");
             }
+            return null;
+        } catch (final Throwable e) {
+            final Log log = LogFactory.getLog(BeanUtils.class);
+            if (log.isWarnEnabled()) {
+                log.warn("Error getting the Throwable initCause() method", e);
+            }
+            return null;
         }
-
-        return -1;
     }
 
-    private ConvertUtilsBean getConvertUtils() {
-        return this.convertUtilsBean;
-    }
-
-    private PropertyUtilsBean getPropertyUtils() {
-        return this.propertyUtilsBean;
+    /**
+     * Determines the type of a {@code DynaProperty}. Here a special treatment
+     * is needed for mapped properties.
+     *
+     * @param dynaProperty the property descriptor
+     * @param value the value object to be set for this property
+     * @return the type of this property
+     */
+    private static Class<?> dynaPropertyType(final DynaProperty dynaProperty,
+            final Object value) {
+        if (!dynaProperty.isMapped()) {
+            return dynaProperty.getType();
+        }
+        return (value == null) ? String.class : value.getClass();
     }
 }
