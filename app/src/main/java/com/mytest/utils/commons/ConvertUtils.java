@@ -14,13 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package com.mytest.utils.commons;
-
-import org.apache.commons.beanutils.ConversionException;
-import org.apache.commons.beanutils.ConvertUtilsBean;
-import org.apache.commons.beanutils.Converter;
 
 /**
  * <p>Utility methods for converting String scalar values to objects of the
@@ -287,7 +281,7 @@ public class ConvertUtils {
     }
 
     /**
-     * <p>Remove all registered {@link org.apache.commons.beanutils.Converter}s, and re-establish the
+     * <p>Remove all registered {@link Converter}s, and re-establish the
      * standard Converters.</p>
      *
      * <p>For more details see <code>ConvertUtilsBean</code>.</p>
@@ -300,7 +294,7 @@ public class ConvertUtils {
 
 
     /**
-     * <p>Remove any registered {@link org.apache.commons.beanutils.Converter} for the specified destination
+     * <p>Remove any registered {@link Converter} for the specified destination
      * <code>Class</code>.</p>
      *
      * <p>For more details see <code>ConvertUtilsBean</code>.</p>
@@ -314,35 +308,35 @@ public class ConvertUtils {
 
 
     /**
-     * <p>Look up and return any registered {@link org.apache.commons.beanutils.Converter} for the specified
+     * <p>Look up and return any registered {@link Converter} for the specified
      * destination class; if there is no registered Converter, return
      * <code>null</code>.</p>
      *
      * <p>For more details see <code>ConvertUtilsBean</code>.</p>
      *
      * @param clazz Class for which to return a registered Converter
-     * @return The registered {@link org.apache.commons.beanutils.Converter} or <code>null</code> if not found
+     * @return The registered {@link Converter} or <code>null</code> if not found
      * @see ConvertUtilsBean#lookup(Class)
      */
-    public static org.apache.commons.beanutils.Converter lookup(final Class<?> clazz) {
+    public static Converter lookup(final Class<?> clazz) {
         return ConvertUtilsBean.getInstance().lookup(clazz);
     }
 
     /**
-     * Look up and return any registered {@link org.apache.commons.beanutils.Converter} for the specified
+     * Look up and return any registered {@link Converter} for the specified
      * source and destination class; if there is no registered Converter,
      * return <code>null</code>.
      *
      * @param sourceType Class of the value being converted
      * @param targetType Class of the value to be converted to
-     * @return The registered {@link org.apache.commons.beanutils.Converter} or <code>null</code> if not found
+     * @return The registered {@link Converter} or <code>null</code> if not found
      */
-    public static org.apache.commons.beanutils.Converter lookup(final Class<?> sourceType, final Class<?> targetType) {
+    public static Converter lookup(final Class<?> sourceType, final Class<?> targetType) {
         return ConvertUtilsBean.getInstance().lookup(sourceType, targetType);
     }
 
     /**
-     * <p>Register a custom {@link org.apache.commons.beanutils.Converter} for the specified destination
+     * <p>Register a custom {@link Converter} for the specified destination
      * <code>Class</code>, replacing any previously registered Converter.</p>
      *
      * <p>For more details see <code>ConvertUtilsBean</code>.</p>
@@ -350,7 +344,7 @@ public class ConvertUtils {
      * @param converter Converter to be registered
      * @param clazz Destination class for conversions performed by this
      *  Converter
-     * @see ConvertUtilsBean#register(org.apache.commons.beanutils.Converter, Class)
+     * @see ConvertUtilsBean#register(Converter, Class)
      */
     public static void register(final Converter converter, final Class<?> clazz) {
         ConvertUtilsBean.getInstance().register(converter, clazz);

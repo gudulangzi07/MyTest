@@ -16,11 +16,9 @@
  */
 package com.mytest.utils.commons;
 
-import org.apache.commons.beanutils.ConvertUtilsBean;
-
 /**
- * {@link org.apache.commons.beanutils.ConvertUtilsBean} implementation that delegates <code>convert()</code>
- * methods to the new {@link org.apache.commons.beanutils.ConvertUtilsBean#convert(Object, Class)} method.
+ * {@link ConvertUtilsBean} implementation that delegates <code>convert()</code>
+ * methods to the new {@link ConvertUtilsBean#convert(Object, Class)} method.
  *
  * <p>
  * To configure this implementation for the current context ClassLoader invoke
@@ -31,16 +29,16 @@ import org.apache.commons.beanutils.ConvertUtilsBean;
  * @version $Id$
  * @since 1.8.0
  */
-public class ConvertUtilsBean2 extends org.apache.commons.beanutils.ConvertUtilsBean {
+public class ConvertUtilsBean2 extends ConvertUtilsBean {
 
     /**
-     * Delegates to the new {@link org.apache.commons.beanutils.ConvertUtilsBean#convert(Object, Class)}
+     * Delegates to the new {@link ConvertUtilsBean#convert(Object, Class)}
      * method.
      *
      * @param value Value to be converted (may be null)
      * @return The converted String value or null if value is null
      *
-     * @see org.apache.commons.beanutils.ConvertUtilsBean#convert(String[], Class)
+     * @see ConvertUtilsBean#convert(String[], Class)
      */
     @Override
     public String convert(final Object value) {
@@ -48,14 +46,14 @@ public class ConvertUtilsBean2 extends org.apache.commons.beanutils.ConvertUtils
     }
 
     /**
-     * Delegates to the new {@link org.apache.commons.beanutils.ConvertUtilsBean#convert(Object, Class)}
+     * Delegates to the new {@link ConvertUtilsBean#convert(Object, Class)}
      * method.
      *
      * @param value Value to be converted (may be null)
      * @param clazz Java class to be converted to (must not be null)
      * @return The converted value or null if value is null
      *
-     * @see org.apache.commons.beanutils.ConvertUtilsBean#convert(String[], Class)
+     * @see ConvertUtilsBean#convert(String[], Class)
      */
     @Override
     public Object convert(final String value, final Class<?> clazz) {
@@ -63,7 +61,7 @@ public class ConvertUtilsBean2 extends org.apache.commons.beanutils.ConvertUtils
     }
 
     /**
-     * Delegates to the new {@link org.apache.commons.beanutils.ConvertUtilsBean#convert(Object, Class)}
+     * Delegates to the new {@link ConvertUtilsBean#convert(Object, Class)}
      * method.
      *
      * @param value Array of values to be converted

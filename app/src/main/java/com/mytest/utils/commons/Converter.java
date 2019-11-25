@@ -14,12 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package com.mytest.utils.commons;
-
-
-import org.apache.commons.beanutils.ConversionException;
 
 /**
  * <p>General purpose data type converter that can be registered and used

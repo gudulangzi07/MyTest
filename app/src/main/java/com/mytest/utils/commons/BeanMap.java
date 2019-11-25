@@ -140,59 +140,31 @@ public class BeanMap extends AbstractMap<Object, Object> implements Cloneable {
         );
         defaultTransformers.put(
             Character.TYPE,
-            new Transformer() {
-                public Object transform( final Object input ) {
-                    return new Character( input.toString().charAt( 0 ) );
-                }
-            }
+                input -> new Character( input.toString().charAt( 0 ) )
         );
         defaultTransformers.put(
             Byte.TYPE,
-            new Transformer() {
-                public Object transform( final Object input ) {
-                    return Byte.valueOf( input.toString() );
-                }
-            }
+                input -> Byte.valueOf( input.toString() )
         );
         defaultTransformers.put(
             Short.TYPE,
-            new Transformer() {
-                public Object transform( final Object input ) {
-                    return Short.valueOf( input.toString() );
-                }
-            }
+                input -> Short.valueOf( input.toString() )
         );
         defaultTransformers.put(
             Integer.TYPE,
-            new Transformer() {
-                public Object transform( final Object input ) {
-                    return Integer.valueOf( input.toString() );
-                }
-            }
+                input -> Integer.valueOf( input.toString() )
         );
         defaultTransformers.put(
             Long.TYPE,
-            new Transformer() {
-                public Object transform( final Object input ) {
-                    return Long.valueOf( input.toString() );
-                }
-            }
+                input -> Long.valueOf( input.toString() )
         );
         defaultTransformers.put(
             Float.TYPE,
-            new Transformer() {
-                public Object transform( final Object input ) {
-                    return Float.valueOf( input.toString() );
-                }
-            }
+                input -> Float.valueOf( input.toString() )
         );
         defaultTransformers.put(
             Double.TYPE,
-            new Transformer() {
-                public Object transform( final Object input ) {
-                    return Double.valueOf( input.toString() );
-                }
-            }
+                input -> Double.valueOf( input.toString() )
         );
         return defaultTransformers;
     }
@@ -277,7 +249,7 @@ public class BeanMap extends AbstractMap<Object, Object> implements Cloneable {
             final CloneNotSupportedException cnse = new CloneNotSupportedException
                 ("Unable to instantiate the underlying bean \"" +
                  beanClass.getName() + "\": " + e);
-            BeanUtils.initCause(cnse, e);
+            BeanUtilsBean.getInstance().initCause(cnse, e);
             throw cnse;
         }
 
@@ -287,7 +259,7 @@ public class BeanMap extends AbstractMap<Object, Object> implements Cloneable {
             final CloneNotSupportedException cnse = new CloneNotSupportedException
                 ("Unable to set bean in the cloned bean map: " +
                  exception);
-            BeanUtils.initCause(cnse, exception);
+            BeanUtilsBean.getInstance().initCause(cnse, exception);
             throw cnse;
         }
 
@@ -306,7 +278,7 @@ public class BeanMap extends AbstractMap<Object, Object> implements Cloneable {
             final CloneNotSupportedException cnse = new CloneNotSupportedException
                 ("Unable to copy bean values to cloned bean map: " +
                  exception);
-            BeanUtils.initCause(cnse, exception);
+            BeanUtilsBean.getInstance().initCause(cnse, exception);
             throw cnse;
         }
 
@@ -352,7 +324,7 @@ public class BeanMap extends AbstractMap<Object, Object> implements Cloneable {
         catch (final Exception e) {
             final UnsupportedOperationException uoe =
                 new UnsupportedOperationException("Could not create new instance of class: " + beanClass);
-            BeanUtils.initCause(uoe, e);
+            BeanUtilsBean.getInstance().initCause(uoe, e);
             throw uoe;
         }
     }
@@ -462,14 +434,14 @@ public class BeanMap extends AbstractMap<Object, Object> implements Cloneable {
             }
             catch ( final InvocationTargetException e ) {
                 final IllegalArgumentException iae = new IllegalArgumentException(e.getMessage());
-                if (BeanUtils.initCause(iae, e) == false) {
+                if (BeanUtilsBean.getInstance().initCause(iae, e) == false) {
                     logInfo(e);
                 }
                 throw iae;
             }
             catch ( final IllegalAccessException e ) {
                 final IllegalArgumentException iae = new IllegalArgumentException(e.getMessage());
-                if (BeanUtils.initCause(iae, e) == false) {
+                if (BeanUtilsBean.getInstance().initCause(iae, e) == false) {
                     logInfo(e);
                 }
                 throw iae;
@@ -819,17 +791,17 @@ public class BeanMap extends AbstractMap<Object, Object> implements Cloneable {
         }
         catch ( final InvocationTargetException e ) {
             final IllegalArgumentException iae = new IllegalArgumentException(e.getMessage());
-            if (BeanUtils.initCause(iae, e) == false) {
+            if (BeanUtilsBean.getInstance().initCause(iae, e) == false) {
                 logInfo(e);
             }
             throw iae;
         }
         catch ( final InstantiationException e ) {
             final IllegalArgumentException iae = new IllegalArgumentException(e.getMessage());
-            if (BeanUtils.initCause(iae, e) == false) {
+            if (BeanUtilsBean.getInstance().initCause(iae, e) == false) {
                 logInfo(e);
             }
-            BeanUtils.initCause(iae, e);
+            BeanUtilsBean.getInstance().initCause(iae, e);
             throw iae;
         }
     }

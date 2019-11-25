@@ -1,22 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.mytest.utils.commons;
-
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -26,10 +8,6 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 
 /**
  * <p> Utility reflection methods focused on methods in general rather than properties in particular. </p>
@@ -187,7 +165,7 @@ public class MethodUtils {
      * would match a <code>boolean</code> primitive.</p>
      *
      * <p> This is a convenient wrapper for
-     * {@link #invokeMethod(Object object,String methodName,Object [] args,Class[] parameterTypes)}.
+     * .
      * </p>
      *
      * @param object invoke method on this object
@@ -227,8 +205,7 @@ public class MethodUtils {
      * <p>Invoke a named method whose parameter type matches the object type.</p>
      *
      * <p>The behaviour of this method is less deterministic
-     * than {@link
-     * #invokeExactMethod(Object object,String methodName,Object [] args,Class[] parameterTypes)}.
+     * than .
      * It loops through all methods with names that match
      * and then executes the first it finds with compatible parameters.</p>
      *
@@ -508,7 +485,7 @@ public class MethodUtils {
      * would match a <code>boolean</code> primitive.</p>
      *
      * <p> This is a convenient wrapper for
-     * {@link #invokeStaticMethod(Class objectClass,String methodName,Object [] args,Class[] parameterTypes)}.
+     * .
      * </p>
      *
      * @param objectClass invoke static method on this class
@@ -549,8 +526,7 @@ public class MethodUtils {
      * <p>Invoke a named static method whose parameter type matches the object type.</p>
      *
      * <p>The behaviour of this method is less deterministic
-     * than {@link
-     * #invokeExactStaticMethod(Class objectClass,String methodName,Object [] args,Class[] parameterTypes)}.
+     * than .
      * It loops through all methods with names that match
      * and then executes the first it finds with compatible parameters.</p>
      *
@@ -922,8 +898,7 @@ public class MethodUtils {
      * through methods names and return the first matching method.</p>
      *
      * <p>This method is used by
-     * {@link
-     * #invokeMethod(Object object,String methodName,Object [] args,Class[] parameterTypes)}.
+     * .
      *
      * <p>This method can match primitive parameter by passing in wrapper classes.
      * For example, a <code>Boolean</code> will match a primitive <code>boolean</code>
@@ -939,10 +914,10 @@ public class MethodUtils {
                                                 final String methodName,
                                                 final Class<?>[] parameterTypes) {
         // trace logging
-        final Log log = LogFactory.getLog(MethodUtils.class);
-        if (log.isTraceEnabled()) {
-            log.trace("Matching name=" + methodName + " on " + clazz);
-        }
+//        final Log log = LogFactory.getLog(MethodUtils.class);
+//        if (log.isTraceEnabled()) {
+//            log.trace("Matching name=" + methodName + " on " + clazz);
+//        }
         final MethodDescriptor md = new MethodDescriptor(clazz, methodName, parameterTypes, false);
 
         // see if we can find the method directly
@@ -955,10 +930,10 @@ public class MethodUtils {
             }
 
             method = clazz.getMethod(methodName, parameterTypes);
-            if (log.isTraceEnabled()) {
-                log.trace("Found straight match: " + method);
-                log.trace("isPublic:" + Modifier.isPublic(method.getModifiers()));
-            }
+//            if (log.isTraceEnabled()) {
+//                log.trace("Found straight match: " + method);
+//                log.trace("isPublic:" + Modifier.isPublic(method.getModifiers()));
+//            }
 
             setMethodAccessible(method); // Default access superclass workaround
 
@@ -976,10 +951,10 @@ public class MethodUtils {
         for (Method method2 : methods) {
             if (method2.getName().equals(methodName)) {
                 // log some trace information
-                if (log.isTraceEnabled()) {
-                    log.trace("Found matching name:");
-                    log.trace(method2);
-                }
+//                if (log.isTraceEnabled()) {
+//                    log.trace("Found matching name:");
+//                    log.trace(method2);
+//                }
 
                 // compare parameters
                 final Class<?>[] methodsParams = method2.getParameterTypes();
@@ -987,15 +962,15 @@ public class MethodUtils {
                 if (methodParamSize == paramSize) {
                     boolean match = true;
                     for (int n = 0 ; n < methodParamSize; n++) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Param=" + parameterTypes[n].getName());
-                            log.trace("Method=" + methodsParams[n].getName());
-                        }
+//                        if (log.isTraceEnabled()) {
+//                            log.trace("Param=" + parameterTypes[n].getName());
+//                            log.trace("Method=" + methodsParams[n].getName());
+//                        }
                         if (!isAssignmentCompatible(methodsParams[n], parameterTypes[n])) {
-                            if (log.isTraceEnabled()) {
-                                log.trace(methodsParams[n] + " is not assignable from "
-                                            + parameterTypes[n]);
-                            }
+//                            if (log.isTraceEnabled()) {
+//                                log.trace(methodsParams[n] + " is not assignable from "
+//                                            + parameterTypes[n]);
+//                            }
                             match = false;
                             break;
                         }
@@ -1005,10 +980,10 @@ public class MethodUtils {
                         // get accessible version of method
                         final Method method = getAccessibleMethod(clazz, method2);
                         if (method != null) {
-                            if (log.isTraceEnabled()) {
-                                log.trace(method + " accessible version of "
-                                            + method2);
-                            }
+//                            if (log.isTraceEnabled()) {
+//                                log.trace(method + " accessible version of "
+//                                            + method2);
+//                            }
                             setMethodAccessible(method); // Default access superclass workaround
                             myCost = getTotalTransformationCost(parameterTypes,method.getParameterTypes());
                             if ( myCost < bestMatchCost ) {
@@ -1017,7 +992,7 @@ public class MethodUtils {
                             }
                         }
 
-                        log.trace("Couldn't find accessible method.");
+//                        log.trace("Couldn't find accessible method.");
                     }
                 }
             }
@@ -1026,7 +1001,7 @@ public class MethodUtils {
                  cacheMethod(md, bestMatch);
         } else {
         // didn't find a match
-               log.trace("No match found.");
+//               log.trace("No match found.");
         }
 
         return bestMatch;
@@ -1060,7 +1035,7 @@ public class MethodUtils {
 
         } catch (final SecurityException se) {
             // log but continue just in case the method.invoke works anyway
-            final Log log = LogFactory.getLog(MethodUtils.class);
+//            final Log log = LogFactory.getLog(MethodUtils.class);
             if (!loggedAccessibleWarning) {
                 boolean vulnerableJVM = false;
                 try {
@@ -1077,14 +1052,14 @@ public class MethodUtils {
                     // don't know - so display warning
                     vulnerableJVM = true;
                 }
-                if (vulnerableJVM) {
-                    log.warn(
-                        "Current Security Manager restricts use of workarounds for reflection bugs "
-                        + " in pre-1.4 JVMs.");
-                }
+//                if (vulnerableJVM) {
+//                    log.warn(
+//                        "Current Security Manager restricts use of workarounds for reflection bugs "
+//                        + " in pre-1.4 JVMs.");
+//                }
                 loggedAccessibleWarning = true;
             }
-            log.debug("Cannot setAccessible on method. Therefore cannot use jvm access bug workaround.", se);
+//            log.debug("Cannot setAccessible on method. Therefore cannot use jvm access bug workaround.", se);
         }
     }
 
@@ -1242,10 +1217,10 @@ public class MethodUtils {
         } else if (Character.class.equals(wrapperType)) {
             return char.class;
         } else {
-            final Log log = LogFactory.getLog(MethodUtils.class);
-            if (log.isDebugEnabled()) {
-                log.debug("Not a known primitive wrapper class: " + wrapperType);
-            }
+//            final Log log = LogFactory.getLog(MethodUtils.class);
+//            if (log.isDebugEnabled()) {
+//                log.debug("Not a known primitive wrapper class: " + wrapperType);
+//            }
             return null;
         }
     }

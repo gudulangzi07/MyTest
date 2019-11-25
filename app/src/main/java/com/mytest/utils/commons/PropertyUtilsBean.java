@@ -24,6 +24,8 @@ import com.googlecode.openbeans.IntrospectionException;
 import com.googlecode.openbeans.Introspector;
 import com.googlecode.openbeans.PropertyDescriptor;
 import com.mytest.utils.commons.colections.FastHashMap;
+import com.mytest.utils.commons.expression.DefaultResolver;
+import com.mytest.utils.commons.expression.Resolver;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -88,7 +90,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @version $Id$
  * @see Resolver
- * @see org.apache.commons.beanutils.PropertyUtils
+ * @see PropertyUtils
  * @since 1.7
  */
 
@@ -118,8 +120,8 @@ public class PropertyUtilsBean {
     /** An empty object array */
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 
-    /** Log instance */
-    private final Log log = LogFactory.getLog(PropertyUtils.class);
+//    /** Log instance */
+//    private final Log log = LogFactory.getLog(PropertyUtils.class);
 
     /** The list with BeanIntrospector objects. */
     private final List<BeanIntrospector> introspectors;
@@ -276,23 +278,23 @@ public class PropertyUtilsBean {
             throw new IllegalArgumentException("No origin bean specified");
         }
 
-        if (orig instanceof org.apache.commons.beanutils.DynaBean) {
-            final org.apache.commons.beanutils.DynaProperty[] origDescriptors =
-                ((org.apache.commons.beanutils.DynaBean) orig).getDynaClass().getDynaProperties();
-            for (org.apache.commons.beanutils.DynaProperty origDescriptor : origDescriptors) {
+        if (orig instanceof DynaBean) {
+            final DynaProperty[] origDescriptors =
+                ((DynaBean) orig).getDynaClass().getDynaProperties();
+            for (DynaProperty origDescriptor : origDescriptors) {
                 final String name = origDescriptor.getName();
                 if (isReadable(orig, name) && isWriteable(dest, name)) {
                     try {
-                        final Object value = ((org.apache.commons.beanutils.DynaBean) orig).get(name);
-                        if (dest instanceof org.apache.commons.beanutils.DynaBean) {
-                            ((org.apache.commons.beanutils.DynaBean) dest).set(name, value);
+                        final Object value = ((DynaBean) orig).get(name);
+                        if (dest instanceof DynaBean) {
+                            ((DynaBean) dest).set(name, value);
                         } else {
                                 setSimpleProperty(dest, name, value);
                         }
                     } catch (final NoSuchMethodException e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Error writing to '" + name + "' on class '" + dest.getClass() + "'", e);
-                        }
+//                        if (log.isDebugEnabled()) {
+//                            log.debug("Error writing to '" + name + "' on class '" + dest.getClass() + "'", e);
+//                        }
                     }
                 }
             }
@@ -303,15 +305,15 @@ public class PropertyUtilsBean {
                 final String name = (String)entry.getKey();
                 if (isWriteable(dest, name)) {
                     try {
-                        if (dest instanceof org.apache.commons.beanutils.DynaBean) {
-                            ((org.apache.commons.beanutils.DynaBean) dest).set(name, entry.getValue());
+                        if (dest instanceof DynaBean) {
+                            ((DynaBean) dest).set(name, entry.getValue());
                         } else {
                             setSimpleProperty(dest, name, entry.getValue());
                         }
                     } catch (final NoSuchMethodException e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Error writing to '" + name + "' on class '" + dest.getClass() + "'", e);
-                        }
+//                        if (log.isDebugEnabled()) {
+//                            log.debug("Error writing to '" + name + "' on class '" + dest.getClass() + "'", e);
+//                        }
                     }
                 }
             }
@@ -323,15 +325,15 @@ public class PropertyUtilsBean {
                 if (isReadable(orig, name) && isWriteable(dest, name)) {
                     try {
                         final Object value = getSimpleProperty(orig, name);
-                        if (dest instanceof org.apache.commons.beanutils.DynaBean) {
-                            ((org.apache.commons.beanutils.DynaBean) dest).set(name, value);
+                        if (dest instanceof DynaBean) {
+                            ((DynaBean) dest).set(name, value);
                         } else {
                                 setSimpleProperty(dest, name, value);
                         }
                     } catch (final NoSuchMethodException e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Error writing to '" + name + "' on class '" + dest.getClass() + "'", e);
-                        }
+//                        if (log.isDebugEnabled()) {
+//                            log.debug("Error writing to '" + name + "' on class '" + dest.getClass() + "'", e);
+//                        }
                     }
                 }
             }
@@ -367,10 +369,10 @@ public class PropertyUtilsBean {
             throw new IllegalArgumentException("No bean specified");
         }
         final Map<String, Object> description = new HashMap<String, Object>();
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
-            final org.apache.commons.beanutils.DynaProperty[] descriptors =
-                ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperties();
-            for (org.apache.commons.beanutils.DynaProperty descriptor : descriptors) {
+        if (bean instanceof DynaBean) {
+            final DynaProperty[] descriptors =
+                ((DynaBean) bean).getDynaClass().getDynaProperties();
+            for (DynaProperty descriptor : descriptors) {
                 final String name = descriptor.getName();
                 description.put(name, getProperty(bean, name));
             }
@@ -491,14 +493,14 @@ public class PropertyUtilsBean {
         }
 
         // Handle DynaBean instances specially
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
-            final org.apache.commons.beanutils.DynaProperty descriptor =
-                    ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperty(name);
+        if (bean instanceof DynaBean) {
+            final DynaProperty descriptor =
+                    ((DynaBean) bean).getDynaClass().getDynaProperty(name);
             if (descriptor == null) {
                 throw new NoSuchMethodException("Unknown property '" +
                     name + "' on bean class '" + bean.getClass() + "'");
             }
-            return (((org.apache.commons.beanutils.DynaBean) bean).get(name, index));
+            return (((DynaBean) bean).get(name, index));
         }
 
         // Retrieve the property descriptor for the specified property
@@ -513,7 +515,7 @@ public class PropertyUtilsBean {
         if (descriptor instanceof IndexedPropertyDescriptor) {
             Method readMethod = ((IndexedPropertyDescriptor) descriptor).
                     getIndexedReadMethod();
-            readMethod = org.apache.commons.beanutils.MethodUtils.getAccessibleMethod(bean.getClass(), readMethod);
+            readMethod = MethodUtils.getAccessibleMethod(bean.getClass(), readMethod);
             if (readMethod != null) {
                 final Object[] subscript = new Object[1];
                 subscript[0] = new Integer(index);
@@ -650,14 +652,14 @@ public class PropertyUtilsBean {
         }
 
         // Handle DynaBean instances specially
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
-            final org.apache.commons.beanutils.DynaProperty descriptor =
-                    ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperty(name);
+        if (bean instanceof DynaBean) {
+            final DynaProperty descriptor =
+                    ((DynaBean) bean).getDynaClass().getDynaProperty(name);
             if (descriptor == null) {
                 throw new NoSuchMethodException("Unknown property '" +
                         name + "'+ on bean class '" + bean.getClass() + "'");
             }
-            return (((org.apache.commons.beanutils.DynaBean) bean).get(name, key));
+            return (((DynaBean) bean).get(name, key));
         }
 
         Object result = null;
@@ -669,11 +671,11 @@ public class PropertyUtilsBean {
                     name + "'+ on bean class '" + bean.getClass() + "'");
         }
 
-        if (descriptor instanceof org.apache.commons.beanutils.MappedPropertyDescriptor) {
+        if (descriptor instanceof MappedPropertyDescriptor) {
             // Call the keyed getter method if there is one
-            Method readMethod = ((org.apache.commons.beanutils.MappedPropertyDescriptor) descriptor).
+            Method readMethod = ((MappedPropertyDescriptor) descriptor).
                     getMappedReadMethod();
-            readMethod = org.apache.commons.beanutils.MethodUtils.getAccessibleMethod(bean.getClass(), readMethod);
+            readMethod = MethodUtils.getAccessibleMethod(bean.getClass(), readMethod);
             if (readMethod != null) {
                 final Object[] keyArray = new Object[1];
                 keyArray[0] = key;
@@ -757,7 +759,7 @@ public class PropertyUtilsBean {
      *  access to the property accessor method
      * @throws IllegalArgumentException if <code>bean</code> or
      *  <code>name</code> is null
-     * @throws org.apache.commons.beanutils.NestedNullException if a nested reference to a
+     * @throws NestedNullException if a nested reference to a
      *  property returns null
      * @throws InvocationTargetException
      * if the property accessor method throws an exception
@@ -790,7 +792,7 @@ public class PropertyUtilsBean {
                 nestedBean = getSimpleProperty(bean, next);
             }
             if (nestedBean == null) {
-                throw new org.apache.commons.beanutils.NestedNullException
+                throw new NestedNullException
                         ("Null property value for '" + name +
                         "' on bean class '" + bean.getClass() + "'");
             }
@@ -934,7 +936,7 @@ public class PropertyUtilsBean {
             final String next = resolver.next(name);
             final Object nestedBean = getProperty(bean, next);
             if (nestedBean == null) {
-                throw new org.apache.commons.beanutils.NestedNullException
+                throw new NestedNullException
                         ("Null property value for '" + next +
                         "' on bean class '" + bean.getClass() + "'");
             }
@@ -968,7 +970,7 @@ public class PropertyUtilsBean {
         if (result == null) {
             // not found, try to create it
             try {
-                result = new org.apache.commons.beanutils.MappedPropertyDescriptor(name, bean.getClass());
+                result = new MappedPropertyDescriptor(name, bean.getClass());
             } catch (final IntrospectionException ie) {
                 /* Swallow IntrospectionException
                  * TODO: Why?
@@ -1127,7 +1129,7 @@ public class PropertyUtilsBean {
             final String next = resolver.next(name);
             final Object nestedBean = getProperty(bean, next);
             if (nestedBean == null) {
-                throw new org.apache.commons.beanutils.NestedNullException
+                throw new NestedNullException
                         ("Null property value for '" + next +
                         "' on bean class '" + bean.getClass() + "'");
             }
@@ -1139,9 +1141,9 @@ public class PropertyUtilsBean {
         name = resolver.getProperty(name);
 
         // Special handling for DynaBeans
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
-            final org.apache.commons.beanutils.DynaProperty descriptor =
-                    ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperty(name);
+        if (bean instanceof DynaBean) {
+            final DynaProperty descriptor =
+                    ((DynaBean) bean).getDynaClass().getDynaProperty(name);
             if (descriptor == null) {
                 return (null);
             }
@@ -1162,8 +1164,8 @@ public class PropertyUtilsBean {
         } else if (descriptor instanceof IndexedPropertyDescriptor) {
             return (((IndexedPropertyDescriptor) descriptor).
                     getIndexedPropertyType());
-        } else if (descriptor instanceof org.apache.commons.beanutils.MappedPropertyDescriptor) {
-            return (((org.apache.commons.beanutils.MappedPropertyDescriptor) descriptor).
+        } else if (descriptor instanceof MappedPropertyDescriptor) {
+            return (((MappedPropertyDescriptor) descriptor).
                     getMappedPropertyType());
         } else {
             return (descriptor.getPropertyType());
@@ -1183,7 +1185,7 @@ public class PropertyUtilsBean {
      */
     public Method getReadMethod(final PropertyDescriptor descriptor) {
 
-        return (org.apache.commons.beanutils.MethodUtils.getAccessibleMethod(descriptor.getReadMethod()));
+        return (MethodUtils.getAccessibleMethod(descriptor.getReadMethod()));
 
     }
 
@@ -1199,7 +1201,7 @@ public class PropertyUtilsBean {
      * @return The read method
      */
     Method getReadMethod(final Class<?> clazz, final PropertyDescriptor descriptor) {
-        return (org.apache.commons.beanutils.MethodUtils.getAccessibleMethod(clazz, descriptor.getReadMethod()));
+        return (MethodUtils.getAccessibleMethod(clazz, descriptor.getReadMethod()));
     }
 
 
@@ -1250,15 +1252,15 @@ public class PropertyUtilsBean {
         }
 
         // Handle DynaBean instances specially
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
-            final org.apache.commons.beanutils.DynaProperty descriptor =
-                    ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperty(name);
+        if (bean instanceof DynaBean) {
+            final DynaProperty descriptor =
+                    ((DynaBean) bean).getDynaClass().getDynaProperty(name);
             if (descriptor == null) {
                 throw new NoSuchMethodException("Unknown property '" +
                         name + "' on dynaclass '" +
-                        ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass() + "'" );
+                        ((DynaBean) bean).getDynaClass() + "'" );
             }
-            return (((org.apache.commons.beanutils.DynaBean) bean).get(name));
+            return (((DynaBean) bean).get(name));
         }
 
         // Retrieve the property getter method for the specified property
@@ -1297,7 +1299,7 @@ public class PropertyUtilsBean {
      */
     public Method getWriteMethod(final PropertyDescriptor descriptor) {
 
-        return (org.apache.commons.beanutils.MethodUtils.getAccessibleMethod(descriptor.getWriteMethod()));
+        return (MethodUtils.getAccessibleMethod(descriptor.getWriteMethod()));
 
     }
 
@@ -1315,7 +1317,7 @@ public class PropertyUtilsBean {
      */
     public Method getWriteMethod(final Class<?> clazz, final PropertyDescriptor descriptor) {
         final BeanIntrospectionData data = getIntrospectionData(clazz);
-        return (org.apache.commons.beanutils.MethodUtils.getAccessibleMethod(clazz,
+        return (MethodUtils.getAccessibleMethod(clazz,
                 data.getWriteMethod(clazz, descriptor)));
     }
 
@@ -1325,7 +1327,7 @@ public class PropertyUtilsBean {
      * a readable property on the specified bean; otherwise, return
      * <code>false</code>.
      *
-     * @param bean Bean to be examined (may be a {@link org.apache.commons.beanutils.DynaBean}
+     * @param bean Bean to be examined (may be a {@link DynaBean}
      * @param name Property name to be evaluated
      * @return <code>true</code> if the property is readable,
      * otherwise <code>false</code>
@@ -1360,7 +1362,7 @@ public class PropertyUtilsBean {
                 return false;
             }
             if (nestedBean == null) {
-                throw new org.apache.commons.beanutils.NestedNullException
+                throw new NestedNullException
                         ("Null property value for '" + next +
                         "' on bean class '" + bean.getClass() + "'");
             }
@@ -1378,9 +1380,9 @@ public class PropertyUtilsBean {
         }
 
         // Return the requested result
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
+        if (bean instanceof DynaBean) {
             // All DynaBean properties are readable
-            return (((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperty(name) != null);
+            return (((DynaBean) bean).getDynaClass().getDynaProperty(name) != null);
         } else {
             try {
                 final PropertyDescriptor desc =
@@ -1390,10 +1392,10 @@ public class PropertyUtilsBean {
                     if (readMethod == null) {
                         if (desc instanceof IndexedPropertyDescriptor) {
                             readMethod = ((IndexedPropertyDescriptor) desc).getIndexedReadMethod();
-                        } else if (desc instanceof org.apache.commons.beanutils.MappedPropertyDescriptor) {
-                            readMethod = ((org.apache.commons.beanutils.MappedPropertyDescriptor) desc).getMappedReadMethod();
+                        } else if (desc instanceof MappedPropertyDescriptor) {
+                            readMethod = ((MappedPropertyDescriptor) desc).getMappedReadMethod();
                         }
-                        readMethod = org.apache.commons.beanutils.MethodUtils.getAccessibleMethod(bean.getClass(), readMethod);
+                        readMethod = MethodUtils.getAccessibleMethod(bean.getClass(), readMethod);
                     }
                     return (readMethod != null);
                 } else {
@@ -1416,7 +1418,7 @@ public class PropertyUtilsBean {
      * a writeable property on the specified bean; otherwise, return
      * <code>false</code>.
      *
-     * @param bean Bean to be examined (may be a {@link org.apache.commons.beanutils.DynaBean}
+     * @param bean Bean to be examined (may be a {@link DynaBean}
      * @param name Property name to be evaluated
      * @return <code>true</code> if the property is writeable,
      * otherwise <code>false</code>
@@ -1451,7 +1453,7 @@ public class PropertyUtilsBean {
                 return false;
             }
             if (nestedBean == null) {
-                throw new org.apache.commons.beanutils.NestedNullException
+                throw new NestedNullException
                         ("Null property value for '" + next +
                         "' on bean class '" + bean.getClass() + "'");
             }
@@ -1469,9 +1471,9 @@ public class PropertyUtilsBean {
         }
 
         // Return the requested result
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
+        if (bean instanceof DynaBean) {
             // All DynaBean properties are writeable
-            return (((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperty(name) != null);
+            return (((DynaBean) bean).getDynaClass().getDynaProperty(name) != null);
         } else {
             try {
                 final PropertyDescriptor desc =
@@ -1481,10 +1483,10 @@ public class PropertyUtilsBean {
                     if (writeMethod == null) {
                         if (desc instanceof IndexedPropertyDescriptor) {
                             writeMethod = ((IndexedPropertyDescriptor) desc).getIndexedWriteMethod();
-                        } else if (desc instanceof org.apache.commons.beanutils.MappedPropertyDescriptor) {
-                            writeMethod = ((org.apache.commons.beanutils.MappedPropertyDescriptor) desc).getMappedWriteMethod();
+                        } else if (desc instanceof MappedPropertyDescriptor) {
+                            writeMethod = ((MappedPropertyDescriptor) desc).getMappedWriteMethod();
                         }
-                        writeMethod = org.apache.commons.beanutils.MethodUtils.getAccessibleMethod(bean.getClass(), writeMethod);
+                        writeMethod = MethodUtils.getAccessibleMethod(bean.getClass(), writeMethod);
                     }
                     return (writeMethod != null);
                 } else {
@@ -1608,14 +1610,14 @@ public class PropertyUtilsBean {
         }
 
         // Handle DynaBean instances specially
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
-            final org.apache.commons.beanutils.DynaProperty descriptor =
-                    ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperty(name);
+        if (bean instanceof DynaBean) {
+            final DynaProperty descriptor =
+                    ((DynaBean) bean).getDynaClass().getDynaProperty(name);
             if (descriptor == null) {
                 throw new NoSuchMethodException("Unknown property '" +
                         name + "' on bean class '" + bean.getClass() + "'");
             }
-            ((org.apache.commons.beanutils.DynaBean) bean).set(name, index, value);
+            ((DynaBean) bean).set(name, index, value);
             return;
         }
 
@@ -1631,21 +1633,21 @@ public class PropertyUtilsBean {
         if (descriptor instanceof IndexedPropertyDescriptor) {
             Method writeMethod = ((IndexedPropertyDescriptor) descriptor).
                     getIndexedWriteMethod();
-            writeMethod = org.apache.commons.beanutils.MethodUtils.getAccessibleMethod(bean.getClass(), writeMethod);
+            writeMethod = MethodUtils.getAccessibleMethod(bean.getClass(), writeMethod);
             if (writeMethod != null) {
                 final Object[] subscript = new Object[2];
                 subscript[0] = new Integer(index);
                 subscript[1] = value;
                 try {
-                    if (log.isTraceEnabled()) {
-                        final String valueClassName =
-                            value == null ? "<null>"
-                                          : value.getClass().getName();
-                        log.trace("setSimpleProperty: Invoking method "
-                                  + writeMethod +" with index=" + index
-                                  + ", value=" + value
-                                  + " (class " + valueClassName+ ")");
-                    }
+//                    if (log.isTraceEnabled()) {
+//                        final String valueClassName =
+//                            value == null ? "<null>"
+//                                          : value.getClass().getName();
+//                        log.trace("setSimpleProperty: Invoking method "
+//                                  + writeMethod +" with index=" + index
+//                                  + ", value=" + value
+//                                  + " (class " + valueClassName+ ")");
+//                    }
                     invokeMethod(writeMethod, bean, subscript);
                 } catch (final InvocationTargetException e) {
                     if (e.getTargetException() instanceof
@@ -1776,14 +1778,14 @@ public class PropertyUtilsBean {
         }
 
         // Handle DynaBean instances specially
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
-            final org.apache.commons.beanutils.DynaProperty descriptor =
-                    ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperty(name);
+        if (bean instanceof DynaBean) {
+            final DynaProperty descriptor =
+                    ((DynaBean) bean).getDynaClass().getDynaProperty(name);
             if (descriptor == null) {
                 throw new NoSuchMethodException("Unknown property '" +
                         name + "' on bean class '" + bean.getClass() + "'");
             }
-            ((org.apache.commons.beanutils.DynaBean) bean).set(name, key, value);
+            ((DynaBean) bean).set(name, key, value);
             return;
         }
 
@@ -1795,7 +1797,7 @@ public class PropertyUtilsBean {
                     name + "' on bean class '" + bean.getClass() + "'");
         }
 
-        if (descriptor instanceof org.apache.commons.beanutils.MappedPropertyDescriptor) {
+        if (descriptor instanceof MappedPropertyDescriptor) {
             // Call the keyed setter method if there is one
             Method mappedWriteMethod =
                     ((MappedPropertyDescriptor) descriptor).
@@ -1805,14 +1807,14 @@ public class PropertyUtilsBean {
                 final Object[] params = new Object[2];
                 params[0] = key;
                 params[1] = value;
-                if (log.isTraceEnabled()) {
-                    final String valueClassName =
-                        value == null ? "<null>" : value.getClass().getName();
-                    log.trace("setSimpleProperty: Invoking method "
-                              + mappedWriteMethod + " with key=" + key
-                              + ", value=" + value
-                              + " (class " + valueClassName +")");
-                }
+//                if (log.isTraceEnabled()) {
+//                    final String valueClassName =
+//                        value == null ? "<null>" : value.getClass().getName();
+//                    log.trace("setSimpleProperty: Invoking method "
+//                              + mappedWriteMethod + " with key=" + key
+//                              + ", value=" + value
+//                              + " (class " + valueClassName +")");
+//                }
                 invokeMethod(mappedWriteMethod, bean, params);
             } else {
                 throw new NoSuchMethodException
@@ -2071,13 +2073,13 @@ public class PropertyUtilsBean {
         }
 
         // Handle DynaBean instances specially
-        if (bean instanceof org.apache.commons.beanutils.DynaBean) {
+        if (bean instanceof DynaBean) {
             final DynaProperty descriptor =
-                    ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass().getDynaProperty(name);
+                    ((DynaBean) bean).getDynaClass().getDynaProperty(name);
             if (descriptor == null) {
                 throw new NoSuchMethodException("Unknown property '" +
                         name + "' on dynaclass '" +
-                        ((org.apache.commons.beanutils.DynaBean) bean).getDynaClass() + "'" );
+                        ((DynaBean) bean).getDynaClass() + "'" );
             }
             ((DynaBean) bean).set(name, value);
             return;
@@ -2099,12 +2101,12 @@ public class PropertyUtilsBean {
         // Call the property setter method
         final Object[] values = new Object[1];
         values[0] = value;
-        if (log.isTraceEnabled()) {
-            final String valueClassName =
-                value == null ? "<null>" : value.getClass().getName();
-            log.trace("setSimpleProperty: Invoking method " + writeMethod
-                      + " with value " + value + " (class " + valueClassName + ")");
-        }
+//        if (log.isTraceEnabled()) {
+//            final String valueClassName =
+//                value == null ? "<null>" : value.getClass().getName();
+//            log.trace("setSimpleProperty: Invoking method " + writeMethod
+//                      + " with value " + value + " (class " + valueClassName + ")");
+//        }
         invokeMethod(writeMethod, bean, values);
 
     }
@@ -2161,9 +2163,9 @@ public class PropertyUtilsBean {
                 + "\" but expected signature \""
                 +   expectedString + "\""
                 );
-            if (!org.apache.commons.beanutils.BeanUtils.initCause(e, cause)) {
-                log.error("Method invocation failed", cause);
-            }
+//            if (!BeanUtils.initCause(e, cause)) {
+//                log.error("Method invocation failed", cause);
+//            }
             throw e;
         } catch (final IllegalArgumentException cause) {
             String valueString = "";
@@ -2198,9 +2200,9 @@ public class PropertyUtilsBean {
                 + "\" but expected signature \""
                 +   expectedString + "\""
                 );
-            if (!BeanUtils.initCause(e, cause)) {
-                log.error("Method invocation failed", cause);
-            }
+//            if (!BeanUtils.initCause(e, cause)) {
+//                log.error("Method invocation failed", cause);
+//            }
             throw e;
 
         }
@@ -2244,7 +2246,7 @@ public class PropertyUtilsBean {
             try {
                 bi.introspect(ictx);
             } catch (final IntrospectionException iex) {
-                log.error("Exception during introspection", iex);
+//                log.error("Exception during introspection", iex);
             }
         }
 

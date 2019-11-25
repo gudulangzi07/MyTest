@@ -17,8 +17,6 @@
 
 package com.mytest.utils.commons;
 
-import org.apache.commons.beanutils.BeanUtils;
-
 import java.util.Map;
 import java.util.WeakHashMap;
 

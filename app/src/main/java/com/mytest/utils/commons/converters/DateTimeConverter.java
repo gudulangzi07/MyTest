@@ -16,6 +16,9 @@
  */
 package com.mytest.utils.commons.converters;
 
+import com.mytest.utils.commons.ConversionException;
+import com.mytest.utils.commons.Converter;
+
 import java.text.DateFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;

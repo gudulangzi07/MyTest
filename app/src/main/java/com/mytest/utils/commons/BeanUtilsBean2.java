@@ -16,12 +16,8 @@
  */
 package com.mytest.utils.commons;
 
-import org.apache.commons.beanutils.BeanUtilsBean;
-import org.apache.commons.beanutils.ConvertUtilsBean;
-import org.apache.commons.beanutils.Converter;
-
 /**
- * <p>{@link org.apache.commons.beanutils.BeanUtilsBean} implementation that creates a
+ * <p>{@link BeanUtilsBean} implementation that creates a
  * {@link ConvertUtilsBean2} and delegates conversion to
  * {@link ConvertUtilsBean#convert(Object, Class)}.
  * </p>
@@ -45,9 +41,9 @@ import org.apache.commons.beanutils.Converter;
  * how it gets the appropriate {@link Converter}. This functionality has been
  * implemented in the new {@link ConvertUtilsBean#lookup(Class, Class)} and
  * {@link ConvertUtilsBean#convert(Object, Class)} methods. However changing
- * {@link org.apache.commons.beanutils.BeanUtilsBean} to use these methods could create compatibility
+ * {@link BeanUtilsBean} to use these methods could create compatibility
  * issues for existing users. In order to avoid that, this new
- * {@link org.apache.commons.beanutils.BeanUtilsBean} implementation has been created (and the associated
+ * {@link BeanUtilsBean} implementation has been created (and the associated
  * {@link ConvertUtilsBean2}).
  * </p>
  *

@@ -18,13 +18,6 @@
 
 package com.mytest.utils.commons;
 
-import org.apache.commons.beanutils.ConversionException;
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaClass;
-import org.apache.commons.beanutils.DynaProperty;
-import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.commons.beanutils.WrapDynaClass;
-
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
@@ -268,7 +261,7 @@ public class WrapDynaBean implements DynaBean, Serializable {
      * @param name Name of the property whose value is to be set
      * @param value Value to which this property is to be set
      *
-     * @throws org.apache.commons.beanutils.ConversionException if the specified value cannot be
+     * @throws ConversionException if the specified value cannot be
      *  converted to the type required for this property
      * @throws IllegalArgumentException if there is no property
      *  of the specified name
@@ -300,7 +293,7 @@ public class WrapDynaBean implements DynaBean, Serializable {
      * @param index Index of the property to be set
      * @param value Value to which this property is to be set
      *
-     * @throws org.apache.commons.beanutils.ConversionException if the specified value cannot be
+     * @throws ConversionException if the specified value cannot be
      *  converted to the type required for this property
      * @throws IllegalArgumentException if there is no property
      *  of the specified name
@@ -387,7 +380,7 @@ public class WrapDynaBean implements DynaBean, Serializable {
      * @throws IllegalArgumentException if this is not a valid property
      *  name for our DynaClass
      */
-    protected org.apache.commons.beanutils.DynaProperty getDynaProperty(final String name) {
+    protected DynaProperty getDynaProperty(final String name) {
 
         final DynaProperty descriptor = getDynaClass().getDynaProperty(name);
         if (descriptor == null) {
@@ -404,9 +397,9 @@ public class WrapDynaBean implements DynaBean, Serializable {
      *
      * @return the associated {@code PropertyUtilsBean}
      */
-    private org.apache.commons.beanutils.PropertyUtilsBean getPropertyUtils() {
+    private PropertyUtilsBean getPropertyUtils() {
 
-        org.apache.commons.beanutils.PropertyUtilsBean propUtils = null;
+        PropertyUtilsBean propUtils = null;
         if (dynaClass != null) {
             propUtils = dynaClass.getPropertyUtilsBean();
         }

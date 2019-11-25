@@ -58,19 +58,10 @@ public class MVVMViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(Long aLong) {
-                        try {
-                            MVVMModel mvvmModel = MVVMModel.class.newInstance();
-                            org.apache.commons.beanutils.BeanUtils.copyProperties(mvvmdb, mvvmModel);
-                            System.out.println("==================" + mvvmModel.getId());
-                            System.out.println("==================" + mvvmModel.getTitle());
-                            System.out.println("==================" + mvvmModel.getCreateTime());
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        }
+                        MVVMModel mvvmModel = com.mytest.utils.commons.BeanUtils.clone(mvvmdb, MVVMModel.class);
+                        System.out.println("==================" + mvvmModel.getId());
+                        System.out.println("==================" + mvvmModel.getTitle());
+                        System.out.println("==================" + mvvmModel.getCreateTime());
 
 //                        MVVMModel mvvmModel = BeanUtils.clone(mvvmdb, MVVMModel.class);
 //                        System.out.println("==================" + mvvmModel.getId());

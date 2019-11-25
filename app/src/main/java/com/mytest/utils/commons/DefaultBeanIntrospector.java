@@ -57,8 +57,8 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
     /** Constant for arguments types of a method that expects a list argument. */
     private static final Class<?>[] LIST_CLASS_PARAMETER = new Class[] { List.class };
 
-    /** Log instance */
-    private final Log log = LogFactory.getLog(getClass());
+//    /** Log instance */
+//    private final Log log = LogFactory.getLog(getClass());
 
     /**
      * Private constructor so that no instances can be created.
@@ -80,9 +80,9 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
             beanInfo = Introspector.getBeanInfo(icontext.getTargetClass());
         } catch (final IntrospectionException e) {
             // no descriptors are added to the context
-            log.error(
-                    "Error when inspecting class " + icontext.getTargetClass(),
-                    e);
+//            log.error(
+//                    "Error when inspecting class " + icontext.getTargetClass(),
+//                    e);
             return;
         }
 
@@ -140,9 +140,9 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
                         try {
                             descriptor.setReadMethod(readMethod);
                         } catch (final Exception e) {
-                            log.error(
-                                    "Error setting indexed property read method",
-                                    e);
+//                            log.error(
+//                                    "Error setting indexed property read method",
+//                                    e);
                         }
                     }
                 }
@@ -170,9 +170,9 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
                         try {
                             descriptor.setWriteMethod(writeMethod);
                         } catch (final Exception e) {
-                            log.error(
-                                    "Error setting indexed property write method",
-                                    e);
+//                            log.error(
+//                                    "Error setting indexed property write method",
+//                                    e);
                         }
                     }
                 }

@@ -16,14 +16,6 @@
  */
 package com.mytest.utils.commons;
 
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaClass;
-import org.apache.commons.beanutils.LazyDynaBean;
-import org.apache.commons.beanutils.LazyDynaClass;
-import org.apache.commons.beanutils.LazyDynaMap;
-import org.apache.commons.beanutils.WrapDynaBean;
-import org.apache.commons.beanutils.WrapDynaClass;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -171,7 +163,7 @@ public class LazyDynaList extends ArrayList<Object> {
     /**
      * The DynaClass of the List's elements.
      */
-    private org.apache.commons.beanutils.DynaClass elementDynaClass;
+    private DynaClass elementDynaClass;
 
     /**
      * The WrapDynaClass if the List's contains
@@ -220,7 +212,7 @@ public class LazyDynaList extends ArrayList<Object> {
      *
      * @param elementDynaClass The DynaClass of the List's elements.
      */
-    public LazyDynaList(final org.apache.commons.beanutils.DynaClass elementDynaClass) {
+    public LazyDynaList(final DynaClass elementDynaClass) {
         super();
         setElementDynaClass(elementDynaClass);
     }
@@ -276,7 +268,7 @@ public class LazyDynaList extends ArrayList<Object> {
     @Override
     public void add(final int index, final Object element) {
 
-        final org.apache.commons.beanutils.DynaBean dynaBean = transform(element);
+        final DynaBean dynaBean = transform(element);
 
         growList(index);
 
@@ -293,7 +285,7 @@ public class LazyDynaList extends ArrayList<Object> {
     @Override
     public boolean add(final Object element) {
 
-        final org.apache.commons.beanutils.DynaBean dynaBean = transform(element);
+        final DynaBean dynaBean = transform(element);
 
         return super.add(dynaBean);
 
@@ -394,7 +386,7 @@ public class LazyDynaList extends ArrayList<Object> {
     @Override
     public Object set(final int index, final Object element) {
 
-        final org.apache.commons.beanutils.DynaBean dynaBean = transform(element);
+        final DynaBean dynaBean = transform(element);
 
         growList(index + 1);
 
@@ -421,14 +413,14 @@ public class LazyDynaList extends ArrayList<Object> {
     public Object[] toArray() {
 
         if (size() == 0 && elementType == null) {
-            return new org.apache.commons.beanutils.LazyDynaBean[0];
+            return new LazyDynaBean[0];
         }
 
         final Object[] array = (Object[])Array.newInstance(elementType, size());
         for (int i = 0; i < size(); i++) {
             if (Map.class.isAssignableFrom(elementType)) {
                 array[i] = ((LazyDynaMap)get(i)).getMap();
-            } else if (org.apache.commons.beanutils.DynaBean.class.isAssignableFrom(elementType)) {
+            } else if (DynaBean.class.isAssignableFrom(elementType)) {
                 array[i] = get(i);
             } else {
                 array[i] = ((WrapDynaBean)get(i)).getInstance();
@@ -449,7 +441,7 @@ public class LazyDynaList extends ArrayList<Object> {
     public <T> T[] toArray(final T[] model) {
 
         final Class<?> arrayType = model.getClass().getComponentType();
-        if ((org.apache.commons.beanutils.DynaBean.class.isAssignableFrom(arrayType))
+        if ((DynaBean.class.isAssignableFrom(arrayType))
                 || (size() == 0 && elementType == null)) {
             return super.toArray(model);
         }
@@ -470,7 +462,7 @@ public class LazyDynaList extends ArrayList<Object> {
                 Object elem;
                 if (Map.class.isAssignableFrom(elementType)) {
                     elem = ((LazyDynaMap) get(i)).getMap();
-                } else if (org.apache.commons.beanutils.DynaBean.class.isAssignableFrom(elementType)) {
+                } else if (DynaBean.class.isAssignableFrom(elementType)) {
                     elem = get(i);
                 } else {
                     elem = ((WrapDynaBean) get(i)).getInstance();
@@ -494,15 +486,15 @@ public class LazyDynaList extends ArrayList<Object> {
      *
      * @return A DynaBean[] of the elements in this List.
      */
-    public org.apache.commons.beanutils.DynaBean[] toDynaBeanArray() {
+    public DynaBean[] toDynaBeanArray() {
 
         if (size() == 0 && elementDynaBeanType == null) {
             return new LazyDynaBean[0];
         }
 
-        final org.apache.commons.beanutils.DynaBean[] array = (org.apache.commons.beanutils.DynaBean[])Array.newInstance(elementDynaBeanType, size());
+        final DynaBean[] array = (DynaBean[])Array.newInstance(elementDynaBeanType, size());
         for (int i = 0; i < size(); i++) {
-            array[i] = (org.apache.commons.beanutils.DynaBean)get(i);
+            array[i] = (DynaBean)get(i);
         }
         return array;
 
@@ -538,12 +530,12 @@ public class LazyDynaList extends ArrayList<Object> {
         }
 
         // Create a DynaBean
-        org.apache.commons.beanutils.DynaBean dynaBean = null;
+        DynaBean dynaBean = null;
         if (Map.class.isAssignableFrom(elementType)) {
             dynaBean = createDynaBeanForMapProperty(object);
             this.elementDynaClass = dynaBean.getDynaClass();
-        } else if (org.apache.commons.beanutils.DynaBean.class.isAssignableFrom(elementType)) {
-            dynaBean = (org.apache.commons.beanutils.DynaBean)object;
+        } else if (DynaBean.class.isAssignableFrom(elementType)) {
+            dynaBean = (DynaBean)object;
             this.elementDynaClass = dynaBean.getDynaClass();
         } else {
             dynaBean = new WrapDynaBean(object);
@@ -568,7 +560,7 @@ public class LazyDynaList extends ArrayList<Object> {
      * @throws IllegalArgumentException if the List already
      *            contains elements or the DynaClass is null.
      */
-    public void setElementDynaClass(final org.apache.commons.beanutils.DynaClass elementDynaClass) {
+    public void setElementDynaClass(final DynaClass elementDynaClass) {
 
         if (elementDynaClass == null) {
             throw new IllegalArgumentException("Element DynaClass is missing");
@@ -580,7 +572,7 @@ public class LazyDynaList extends ArrayList<Object> {
 
         // Try to create a new instance of the DynaBean
         try {
-            final org.apache.commons.beanutils.DynaBean dynaBean  = elementDynaClass.newInstance();
+            final DynaBean dynaBean  = elementDynaClass.newInstance();
             this.elementDynaBeanType = dynaBean.getClass();
             if (WrapDynaBean.class.isAssignableFrom(elementDynaBeanType)) {
                 this.elementType = ((WrapDynaBean)dynaBean).getInstance().getClass();
@@ -619,7 +611,7 @@ public class LazyDynaList extends ArrayList<Object> {
         ensureCapacity(requiredSize + 1);
 
         for (int i = size(); i < requiredSize; i++) {
-            final org.apache.commons.beanutils.DynaBean dynaBean = transform(null);
+            final DynaBean dynaBean = transform(null);
             super.add(dynaBean);
         }
 
@@ -637,9 +629,9 @@ public class LazyDynaList extends ArrayList<Object> {
      * @param element The element to transformed.
      * @param The DynaBean to store in the List.
      */
-    private org.apache.commons.beanutils.DynaBean transform(final Object element) {
+    private DynaBean transform(final Object element) {
 
-        org.apache.commons.beanutils.DynaBean dynaBean     = null;
+        DynaBean dynaBean     = null;
         Class<?> newDynaBeanType = null;
         Class<?> newElementType  = null;
 
@@ -673,7 +665,7 @@ public class LazyDynaList extends ArrayList<Object> {
             newElementType = element.getClass();
             if (Map.class.isAssignableFrom(element.getClass())) {
                 dynaBean = createDynaBeanForMapProperty(element);
-            } else if (org.apache.commons.beanutils.DynaBean.class.isAssignableFrom(element.getClass())) {
+            } else if (DynaBean.class.isAssignableFrom(element.getClass())) {
                 dynaBean = (DynaBean)element;
             } else {
                 dynaBean = new WrapDynaBean(element);

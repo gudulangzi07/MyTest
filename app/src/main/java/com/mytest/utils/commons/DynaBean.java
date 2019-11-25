@@ -14,13 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package com.mytest.utils.commons;
-
-
-import org.apache.commons.beanutils.ConversionException;
-import org.apache.commons.beanutils.DynaClass;
 
 /**
  * <p>A <strong>DynaBean</strong> is a Java object that supports properties
@@ -126,7 +120,7 @@ public interface DynaBean {
      * @param name Name of the property whose value is to be set
      * @param value Value to which this property is to be set
      *
-     * @throws org.apache.commons.beanutils.ConversionException if the specified value cannot be
+     * @throws ConversionException if the specified value cannot be
      *  converted to the type required for this property
      * @throws IllegalArgumentException if there is no property
      *  of the specified name
@@ -143,7 +137,7 @@ public interface DynaBean {
      * @param index Index of the property to be set
      * @param value Value to which this property is to be set
      *
-     * @throws org.apache.commons.beanutils.ConversionException if the specified value cannot be
+     * @throws ConversionException if the specified value cannot be
      *  converted to the type required for this property
      * @throws IllegalArgumentException if there is no property
      *  of the specified name

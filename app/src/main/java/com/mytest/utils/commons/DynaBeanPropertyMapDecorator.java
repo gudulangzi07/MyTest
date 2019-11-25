@@ -16,16 +16,14 @@
  */
 package com.mytest.utils.commons;
 
-import org.apache.commons.beanutils.DynaBean;
-
 /**
- * <p>Decorates a {@link org.apache.commons.beanutils.DynaBean} to provide <code>Map</code> behavior.</p>
+ * <p>Decorates a {@link DynaBean} to provide <code>Map</code> behavior.</p>
  *
- * <p>The motivation for this implementation is to provide access to {@link org.apache.commons.beanutils.DynaBean}
- *    properties in technologies that are unaware of BeanUtils and {@link org.apache.commons.beanutils.DynaBean}s -
+ * <p>The motivation for this implementation is to provide access to {@link DynaBean}
+ *    properties in technologies that are unaware of BeanUtils and {@link DynaBean}s -
  *    such as the expression languages of JSTL and JSF.</p>
  *
- * <p>This can be achieved either by wrapping the {@link org.apache.commons.beanutils.DynaBean} prior to
+ * <p>This can be achieved either by wrapping the {@link DynaBean} prior to
  *    providing it to the technology to process or by providing a <code>Map</code>
  *    accessor method on the DynaBean implementation:
  *    <pre><code>
@@ -42,8 +40,8 @@ import org.apache.commons.beanutils.DynaBean;
  *
  * <h3>Usage</h3>
  *
- * <p>To decorate a {@link org.apache.commons.beanutils.DynaBean} simply instantiate this class with the
- *    target {@link org.apache.commons.beanutils.DynaBean}:</p>
+ * <p>To decorate a {@link DynaBean} simply instantiate this class with the
+ *    target {@link DynaBean}:</p>
  *
  * <ul><li><code>Map&lt;String, Object&gt; fooMap = new DynaBeanPropertyMapDecorator(fooDynaBean);</code></li></ul>
  *
@@ -66,23 +64,23 @@ import org.apache.commons.beanutils.DynaBean;
  */
 public class DynaBeanPropertyMapDecorator extends BaseDynaBeanMapDecorator<String> {
     /**
-     * Construct a Map for the specified {@link org.apache.commons.beanutils.DynaBean}.
+     * Construct a Map for the specified {@link DynaBean}.
      *
      * @param dynaBean The dyna bean being decorated
      * @param readOnly <code>true</code> if the Map is read only
      * otherwise <code>false</code>
-     * @throws IllegalArgumentException if the {@link org.apache.commons.beanutils.DynaBean} is null.
+     * @throws IllegalArgumentException if the {@link DynaBean} is null.
      */
-    public DynaBeanPropertyMapDecorator(final org.apache.commons.beanutils.DynaBean dynaBean, final boolean readOnly) {
+    public DynaBeanPropertyMapDecorator(final DynaBean dynaBean, final boolean readOnly) {
         super(dynaBean, readOnly);
     }
 
     /**
      * Constructs a read only Map for the specified
-     * {@link org.apache.commons.beanutils.DynaBean}.
+     * {@link DynaBean}.
      *
      * @param dynaBean The dyna bean being decorated
-     * @throws IllegalArgumentException if the {@link org.apache.commons.beanutils.DynaBean} is null.
+     * @throws IllegalArgumentException if the {@link DynaBean} is null.
      */
     public DynaBeanPropertyMapDecorator(final DynaBean dynaBean) {
         super(dynaBean);

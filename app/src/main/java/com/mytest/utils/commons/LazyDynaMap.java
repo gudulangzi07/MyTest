@@ -1,26 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.mytest.utils.commons;
-
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaClass;
-import org.apache.commons.beanutils.DynaProperty;
-import org.apache.commons.beanutils.LazyDynaBean;
-import org.apache.commons.beanutils.MutableDynaClass;
 
 import java.util.Map;
 
@@ -117,7 +95,7 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      *
      * @param properties Property descriptors for the supported properties
      */
-    public LazyDynaMap(final org.apache.commons.beanutils.DynaProperty[] properties) {
+    public LazyDynaMap(final DynaProperty[] properties) {
         this(null, properties);
     }
 
@@ -127,10 +105,10 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      * @param name Name of this DynaBean class
      * @param properties Property descriptors for the supported properties
      */
-    public LazyDynaMap(final String name, final org.apache.commons.beanutils.DynaProperty[] properties) {
+    public LazyDynaMap(final String name, final DynaProperty[] properties) {
         this(name, (Map<String, Object>)null);
         if (properties != null) {
-            for (org.apache.commons.beanutils.DynaProperty propertie : properties) {
+            for (DynaProperty propertie : properties) {
                 add(propertie);
             }
         }
@@ -141,7 +119,7 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      *
      * @param dynaClass DynaClass to copy the name and properties from
      */
-    public LazyDynaMap(final org.apache.commons.beanutils.DynaClass dynaClass) {
+    public LazyDynaMap(final DynaClass dynaClass) {
         this(dynaClass.getName(), dynaClass.getDynaProperties());
     }
 
@@ -221,7 +199,7 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      *
      * @throws IllegalArgumentException if no property name is specified
      */
-    public org.apache.commons.beanutils.DynaProperty getDynaProperty(final String name) {
+    public DynaProperty getDynaProperty(final String name) {
 
         if (name == null) {
             throw new IllegalArgumentException("Property name is missing.");
@@ -236,9 +214,9 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
         final Object value = values.get(name);
 
         if (value == null) {
-            return new org.apache.commons.beanutils.DynaProperty(name);
+            return new DynaProperty(name);
         } else {
-            return new org.apache.commons.beanutils.DynaProperty(name, value.getClass());
+            return new DynaProperty(name, value.getClass());
         }
 
     }
@@ -253,14 +231,14 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      * and a bunch of other stuff?</p>
      * @return the set of properties for this DynaClass
      */
-    public org.apache.commons.beanutils.DynaProperty[] getDynaProperties() {
+    public DynaProperty[] getDynaProperties() {
 
         int i = 0;
-        final org.apache.commons.beanutils.DynaProperty[] properties = new org.apache.commons.beanutils.DynaProperty[values.size()];
+        final DynaProperty[] properties = new DynaProperty[values.size()];
         for (final Map.Entry<String, Object> e : values.entrySet()) {
             final String name = e.getKey();
             final Object value = values.get(name);
-            properties[i++] = new org.apache.commons.beanutils.DynaProperty(name, value == null ? null
+            properties[i++] = new DynaProperty(name, value == null ? null
                     : value.getClass());
         }
 
@@ -289,13 +267,13 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
 
         // Crate new LazyDynaMap and initialize properties
         final LazyDynaMap lazyMap = new LazyDynaMap(newMap);
-        final org.apache.commons.beanutils.DynaProperty[] properties = this.getDynaProperties();
+        final DynaProperty[] properties = this.getDynaProperties();
         if (properties != null) {
-            for (org.apache.commons.beanutils.DynaProperty propertie : properties) {
+            for (DynaProperty propertie : properties) {
                 lazyMap.add(propertie);
             }
         }
-        return lazyMap;
+        return (DynaBean) lazyMap;
     }
 
 
@@ -399,7 +377,7 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      *
      * @throws IllegalArgumentException if name is null
      */
-    protected void add(final org.apache.commons.beanutils.DynaProperty property) {
+    protected void add(final DynaProperty property) {
         add(property.getName(), property.getType());
     }
 
@@ -441,9 +419,9 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      * the <code>getDynaProperty(name)</code> method if the property
      * doesn't exist.
      *
-     * @return <code>true</code> if a <code>null</code> {@link org.apache.commons.beanutils.DynaProperty}
+     * @return <code>true</code> if a <code>null</code> {@link DynaProperty}
      * should be returned if the property doesn't exist, otherwise
-     * <code>false</code> if a new {@link org.apache.commons.beanutils.DynaProperty} should be created.
+     * <code>false</code> if a new {@link DynaProperty} should be created.
      */
     public boolean isReturnNull() {
         return returnNull;
@@ -454,7 +432,7 @@ public class LazyDynaMap extends LazyDynaBean implements MutableDynaClass {
      * the <code>getDynaProperty(name)</code> method if the property
      * doesn't exist.
      *
-     * @param returnNull <code>true</code> if a <code>null</code> {@link org.apache.commons.beanutils.DynaProperty}
+     * @param returnNull <code>true</code> if a <code>null</code> {@link DynaProperty}
      * should be returned if the property doesn't exist, otherwise
      * <code>false</code> if a new {@link DynaProperty} should be created.
      */

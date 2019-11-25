@@ -17,10 +17,6 @@
 
 package com.mytest.utils.commons;
 
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaClass;
-import org.apache.commons.beanutils.DynaProperty;
-
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -33,12 +29,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p>Provides common logic for JDBC implementations of {@link org.apache.commons.beanutils.DynaClass}.</p>
+ * <p>Provides common logic for JDBC implementations of {@link DynaClass}.</p>
  *
  * @version $Id$
  */
 
-abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, Serializable {
+abstract class JDBCDynaClass implements DynaClass, Serializable {
 
     // ----------------------------------------------------- Instance Variables
 
@@ -55,9 +51,9 @@ abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, 
 
     /**
      * <p>The set of dynamic properties that are part of this
-     * {@link org.apache.commons.beanutils.DynaClass}.</p>
+     * {@link DynaClass}.</p>
      */
-    protected org.apache.commons.beanutils.DynaProperty[] properties = null;
+    protected DynaProperty[] properties = null;
 
     /**
      * <p>The set of dynamic properties that are part of this
@@ -65,7 +61,7 @@ abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, 
      * instances will be the same instances as those in the
      * <code>properties</code> list.</p>
      */
-    protected Map<String, org.apache.commons.beanutils.DynaProperty> propertiesMap = new HashMap<String, org.apache.commons.beanutils.DynaProperty>();
+    protected Map<String, DynaProperty> propertiesMap = new HashMap<String, DynaProperty>();
 
     /**
      * Cross Reference for column name --> dyna property name
@@ -96,7 +92,7 @@ abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, 
      *
      * @throws IllegalArgumentException if no property name is specified
      */
-    public org.apache.commons.beanutils.DynaProperty getDynaProperty(final String name) {
+    public DynaProperty getDynaProperty(final String name) {
 
         if (name == null) {
             throw new IllegalArgumentException("No property name specified");
@@ -110,7 +106,7 @@ abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, 
      * currently defined in this DynaClass.  If no properties are defined, a
      * zero-length array will be returned.</p>
      */
-    public org.apache.commons.beanutils.DynaProperty[] getDynaProperties() {
+    public DynaProperty[] getDynaProperties() {
 
         return (properties);
 
@@ -179,7 +175,7 @@ abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, 
      * @return the newly created DynaProperty instance
      * @throws SQLException If an error occurs accessing the SQL metadata
      */
-    protected org.apache.commons.beanutils.DynaProperty createDynaProperty(
+    protected DynaProperty createDynaProperty(
                                     final ResultSetMetaData metadata,
                                     final int i)
                                     throws SQLException {
@@ -203,11 +199,11 @@ abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, 
             final int sqlType = metadata.getColumnType(i);
             switch (sqlType) {
                 case java.sql.Types.DATE:
-                    return new org.apache.commons.beanutils.DynaProperty(name, Date.class);
+                    return new DynaProperty(name, Date.class);
                 case java.sql.Types.TIMESTAMP:
-                    return new org.apache.commons.beanutils.DynaProperty(name, Timestamp.class);
+                    return new DynaProperty(name, Timestamp.class);
                 case java.sql.Types.TIME:
-                    return new org.apache.commons.beanutils.DynaProperty(name, Time.class);
+                    return new DynaProperty(name, Time.class);
                 default:
                     className = metadata.getColumnClassName(i);
             }
@@ -222,7 +218,7 @@ abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, 
         if (className != null) {
             clazz = loadClass(className);
         }
-        return new org.apache.commons.beanutils.DynaProperty(name, clazz);
+        return new DynaProperty(name, clazz);
 
     }
 
@@ -240,11 +236,11 @@ abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, 
     protected void introspect(final ResultSet resultSet) throws SQLException {
 
         // Accumulate an ordered list of DynaProperties
-        final ArrayList<org.apache.commons.beanutils.DynaProperty> list = new ArrayList<org.apache.commons.beanutils.DynaProperty>();
+        final ArrayList<DynaProperty> list = new ArrayList<DynaProperty>();
         final ResultSetMetaData metadata = resultSet.getMetaData();
         final int n = metadata.getColumnCount();
         for (int i = 1; i <= n; i++) { // JDBC is one-relative!
-            final org.apache.commons.beanutils.DynaProperty dynaProperty = createDynaProperty(metadata, i);
+            final DynaProperty dynaProperty = createDynaProperty(metadata, i);
             if (dynaProperty != null) {
                     list.add(dynaProperty);
             }
@@ -252,8 +248,8 @@ abstract class JDBCDynaClass implements org.apache.commons.beanutils.DynaClass, 
 
         // Convert this list into the internal data structures we need
         properties =
-            list.toArray(new org.apache.commons.beanutils.DynaProperty[list.size()]);
-        for (org.apache.commons.beanutils.DynaProperty propertie : properties) {
+            list.toArray(new DynaProperty[list.size()]);
+        for (DynaProperty propertie : properties) {
             propertiesMap.put(propertie.getName(), propertie);
         }
 

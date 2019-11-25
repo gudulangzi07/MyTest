@@ -1,29 +1,5 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
 package com.mytest.utils.commons;
 
-
-import org.apache.commons.beanutils.BasicDynaBean;
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaClass;
-import org.apache.commons.beanutils.DynaProperty;
-import org.apache.commons.beanutils.JDBCDynaClass;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
@@ -33,9 +9,9 @@ import java.util.List;
 
 
 /**
- * <p>Implementation of {@link org.apache.commons.beanutils.DynaClass} that creates an in-memory collection
- * of {@link org.apache.commons.beanutils.DynaBean}s representing the results of an SQL query.  Once the
- * {@link org.apache.commons.beanutils.DynaClass} instance has been created, the JDBC <code>ResultSet</code>
+ * <p>Implementation of {@link DynaClass} that creates an in-memory collection
+ * of {@link DynaBean}s representing the results of an SQL query.  Once the
+ * {@link DynaClass} instance has been created, the JDBC <code>ResultSet</code>
  * and <code>Statement</code> on which it is based can be closed, and the
  * underlying <code>Connection</code> can be returned to its connection pool
  * (if you are using one).</p>
@@ -53,15 +29,15 @@ import java.util.List;
  *   ...;                   // Process the rows as desired
  * </pre>
  *
- * <p>Each column in the result set will be represented as a {@link org.apache.commons.beanutils.DynaBean}
+ * <p>Each column in the result set will be represented as a {@link DynaBean}
  * property of the corresponding name (optionally forced to lower case
- * for portability).  There will be one {@link org.apache.commons.beanutils.DynaBean} in the
+ * for portability).  There will be one {@link DynaBean} in the
  * <code>List</code> returned by <code>getRows()</code> for each
  * row in the original <code>ResultSet</code>.</p>
  *
  * <p>In general, instances of {@link RowSetDynaClass} can be serialized
  * and deserialized, which will automatically include the list of
- * {@link org.apache.commons.beanutils.DynaBean}s representing the data content.  The only exception
+ * {@link DynaBean}s representing the data content.  The only exception
  * to this rule would be when the underlying property values that were
  * copied from the <code>ResultSet</code> originally cannot themselves
  * be serialized.  Therefore, a {@link RowSetDynaClass} makes a very
@@ -71,7 +47,7 @@ import java.util.List;
  * @version $Id$
  */
 
-public class RowSetDynaClass extends org.apache.commons.beanutils.JDBCDynaClass implements DynaClass, Serializable {
+public class RowSetDynaClass extends JDBCDynaClass implements DynaClass, Serializable {
 
 
     // ----------------------------------------------------- Instance variables
@@ -84,11 +60,11 @@ public class RowSetDynaClass extends org.apache.commons.beanutils.JDBCDynaClass 
     protected int limit = -1;
 
     /**
-     * <p>The list of {@link org.apache.commons.beanutils.DynaBean}s representing the contents of
+     * <p>The list of {@link DynaBean}s representing the contents of
      * the original <code>ResultSet</code> on which this
      * {@link RowSetDynaClass} was based.</p>
      */
-    protected List<org.apache.commons.beanutils.DynaBean> rows = new ArrayList<org.apache.commons.beanutils.DynaBean>();
+    protected List<DynaBean> rows = new ArrayList<DynaBean>();
 
     // ----------------------------------------------------------- Constructors
 
@@ -173,7 +149,7 @@ public class RowSetDynaClass extends org.apache.commons.beanutils.JDBCDynaClass 
      *
      * @param resultSet The result set to be wrapped
      * @param lowerCase Should property names be lower cased?
-     * @param limit Maximum limit for the <code>List</code> of {@link org.apache.commons.beanutils.DynaBean}
+     * @param limit Maximum limit for the <code>List</code> of {@link DynaBean}
      *
      * @throws NullPointerException if <code>resultSet</code>
      *  is <code>null</code>
@@ -231,7 +207,7 @@ public class RowSetDynaClass extends org.apache.commons.beanutils.JDBCDynaClass 
      *
      * @param resultSet The result set to be wrapped
      * @param lowerCase Should property names be lower cased?
-     * @param limit Maximum limit for the <code>List</code> of {@link org.apache.commons.beanutils.DynaBean}
+     * @param limit Maximum limit for the <code>List</code> of {@link DynaBean}
      * @param useColumnLabel true if the column label should be used, otherwise false
      *
      * @throws NullPointerException if <code>resultSet</code>
@@ -255,19 +231,19 @@ public class RowSetDynaClass extends org.apache.commons.beanutils.JDBCDynaClass 
     }
 
     /**
-     * <p>Return a <code>List</code> containing the {@link org.apache.commons.beanutils.DynaBean}s that
+     * <p>Return a <code>List</code> containing the {@link DynaBean}s that
      * represent the contents of each <code>Row</code> from the
      * <code>ResultSet</code> that was the basis of this
-     * {@link RowSetDynaClass} instance.  These {@link org.apache.commons.beanutils.DynaBean}s are
+     * {@link RowSetDynaClass} instance.  These {@link DynaBean}s are
      * disconnected from the database itself, so there is no problem with
      * modifying the contents of the list, or the values of the properties
-     * of these {@link org.apache.commons.beanutils.DynaBean}s.  However, it is the application's
+     * of these {@link DynaBean}s.  However, it is the application's
      * responsibility to persist any such changes back to the database,
      * if it so desires.</p>
      *
-     * @return A <code>List</code> of {@link org.apache.commons.beanutils.DynaBean} instances
+     * @return A <code>List</code> of {@link DynaBean} instances
      */
-    public List<org.apache.commons.beanutils.DynaBean> getRows() {
+    public List<DynaBean> getRows() {
 
         return (this.rows);
 
@@ -279,8 +255,8 @@ public class RowSetDynaClass extends org.apache.commons.beanutils.JDBCDynaClass 
 
     /**
      * <p>Copy the column values for each row in the specified
-     * <code>ResultSet</code> into a newly created {@link org.apache.commons.beanutils.DynaBean}, and add
-     * this bean to the list of {@link org.apache.commons.beanutils.DynaBean}s that will later by
+     * <code>ResultSet</code> into a newly created {@link DynaBean}, and add
+     * this bean to the list of {@link DynaBean}s that will later by
      * returned by a call to <code>getRows()</code>.</p>
      *
      * @param resultSet The <code>ResultSet</code> whose data is to be
@@ -292,7 +268,7 @@ public class RowSetDynaClass extends org.apache.commons.beanutils.JDBCDynaClass 
 
         int cnt = 0;
         while (resultSet.next() && (limit < 0  || cnt++ < limit) ) {
-            final org.apache.commons.beanutils.DynaBean bean = createDynaBean();
+            final DynaBean bean = createDynaBean();
             for (DynaProperty propertie : properties) {
                 final String name = propertie.getName();
                 final Object value = getObject(resultSet, name);
@@ -305,7 +281,7 @@ public class RowSetDynaClass extends org.apache.commons.beanutils.JDBCDynaClass 
 
 
     /**
-     * <p>Create and return a new {@link org.apache.commons.beanutils.DynaBean} instance to be used for
+     * <p>Create and return a new {@link DynaBean} instance to be used for
      * representing a row in the underlying result set.</p>
      *
      * @return A new <code>DynaBean</code> instance

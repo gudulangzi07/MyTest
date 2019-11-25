@@ -1,28 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
 package com.mytest.utils.commons;
-
-
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaClass;
-import org.apache.commons.beanutils.JDBCDynaClass;
-import org.apache.commons.beanutils.ResultSetIterator;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -48,17 +24,17 @@ import java.util.Iterator;
  * property of the corresponding name (optionally forced to lower case
  * for portability).</p>
  *
- * <p><strong>WARNING</strong> - Any {@link org.apache.commons.beanutils.DynaBean} instance returned by
+ * <p><strong>WARNING</strong> - Any {@link DynaBean} instance returned by
  * this class, or from the <code>Iterator</code> returned by the
  * <code>iterator()</code> method, is directly linked to the row that the
  * underlying result set is currently positioned at.  This has the following
  * implications:</p>
  * <ul>
- * <li>Once you retrieve a different {@link org.apache.commons.beanutils.DynaBean} instance, you should
+ * <li>Once you retrieve a different {@link DynaBean} instance, you should
  *     no longer use any previous instance.</li>
  * <li>Changing the position of the underlying result set will change the
- *     data that the {@link org.apache.commons.beanutils.DynaBean} references.</li>
- * <li>Once the underlying result set is closed, the {@link org.apache.commons.beanutils.DynaBean}
+ *     data that the {@link DynaBean} references.</li>
+ * <li>Once the underlying result set is closed, the {@link DynaBean}
  *     instance may no longer be used.</li>
  * </ul>
  *
@@ -85,7 +61,7 @@ import java.util.Iterator;
  * @version $Id$
  */
 
-public class ResultSetDynaClass extends org.apache.commons.beanutils.JDBCDynaClass implements DynaClass {
+public class ResultSetDynaClass extends JDBCDynaClass implements DynaClass {
 
 
     // ----------------------------------------------------------- Constructors
@@ -189,11 +165,11 @@ public class ResultSetDynaClass extends org.apache.commons.beanutils.JDBCDynaCla
 
 
     /**
-     * <p>Return an <code>Iterator</code> of {@link org.apache.commons.beanutils.DynaBean} instances for
+     * <p>Return an <code>Iterator</code> of {@link DynaBean} instances for
      * each row of the wrapped <code>ResultSet</code>, in "forward" order.
      * Unless the underlying result set supports scrolling, this method
      * should be called only once.</p>
-     * @return An <code>Iterator</code> of {@link org.apache.commons.beanutils.DynaBean} instances
+     * @return An <code>Iterator</code> of {@link DynaBean} instances
      */
     public Iterator<DynaBean> iterator() {
 

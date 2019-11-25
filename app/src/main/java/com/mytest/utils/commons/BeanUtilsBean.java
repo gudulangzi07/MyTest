@@ -1,26 +1,8 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
 package com.mytest.utils.commons;
-
 
 import com.googlecode.openbeans.IndexedPropertyDescriptor;
 import com.googlecode.openbeans.PropertyDescriptor;
+import com.mytest.utils.commons.expression.Resolver;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -31,33 +13,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ContextClassLoaderLocal;
-import org.apache.commons.beanutils.ConversionException;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.ConvertUtilsBean;
-import org.apache.commons.beanutils.Converter;
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaClass;
-import org.apache.commons.beanutils.DynaProperty;
-import org.apache.commons.beanutils.MappedPropertyDescriptor;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.commons.beanutils.expression.Resolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-
 /**
  * <p>JavaBean property population methods.</p>
  *
  * <p>This class provides implementations for the utility methods in
- * {@link org.apache.commons.beanutils.BeanUtils}.
+ * {@link BeanUtils}.
  * Different instances can be used to isolate caches between classloaders
  * and to vary the value converters registered.</p>
  *
  * @version $Id$
- * @see org.apache.commons.beanutils.BeanUtils
+ * @see BeanUtils
  * @since 1.7
  */
 
@@ -79,7 +44,7 @@ public class BeanUtilsBean {
                     };
 
     /**
-     * Gets the instance which provides the functionality for {@link org.apache.commons.beanutils.BeanUtils}.
+     * Gets the instance which provides the functionality for {@link BeanUtils}.
      * This is a pseudo-singleton - an single instance is provided per (thread) context classloader.
      * This mechanism provides isolation for web apps deployed in the same container.
      *
@@ -90,7 +55,7 @@ public class BeanUtilsBean {
     }
 
     /**
-     * Sets the instance which provides the functionality for {@link org.apache.commons.beanutils.BeanUtils}.
+     * Sets the instance which provides the functionality for {@link BeanUtils}.
      * This is a pseudo-singleton - an single instance is provided per (thread) context classloader.
      * This mechanism provides isolation for web apps deployed in the same container.
      *
@@ -102,10 +67,10 @@ public class BeanUtilsBean {
 
     // --------------------------------------------------------- Attributes
 
-    /**
-     * Logging for this instance
-     */
-    private final Log log = LogFactory.getLog(org.apache.commons.beanutils.BeanUtils.class);
+//    /**
+//     * Logging for this instance
+//     */
+//    private final Log log = LogFactory.getLog(BeanUtils.class);
 
     /** Used to perform conversions between object types when setting properties */
     private final ConvertUtilsBean convertUtilsBean;
@@ -183,9 +148,9 @@ public class BeanUtilsBean {
             throws IllegalAccessException, InstantiationException,
             InvocationTargetException, NoSuchMethodException {
 
-        if (log.isDebugEnabled()) {
-            log.debug("Cloning bean: " + bean.getClass().getName());
-        }
+//        if (log.isDebugEnabled()) {
+//            log.debug("Cloning bean: " + bean.getClass().getName());
+//        }
         Object newBean = null;
         if (bean instanceof DynaBean) {
             newBean = ((DynaBean) bean).getDynaClass().newInstance();
@@ -251,10 +216,10 @@ public class BeanUtilsBean {
         if (orig == null) {
             throw new IllegalArgumentException("No origin bean specified");
         }
-        if (log.isDebugEnabled()) {
-            log.debug("BeanUtils.copyProperties(" + dest + ", " +
-                      orig + ")");
-        }
+//        if (log.isDebugEnabled()) {
+//            log.debug("BeanUtils.copyProperties(" + dest + ", " +
+//                      orig + ")");
+//        }
 
         // Copy the properties, converting as necessary
         if (orig instanceof DynaBean) {
@@ -339,33 +304,33 @@ public class BeanUtilsBean {
     public void copyProperty(final Object bean, String name, Object value)
         throws IllegalAccessException, InvocationTargetException {
 
-        // Trace logging (if enabled)
-        if (log.isTraceEnabled()) {
-            final StringBuilder sb = new StringBuilder("  copyProperty(");
-            sb.append(bean);
-            sb.append(", ");
-            sb.append(name);
-            sb.append(", ");
-            if (value == null) {
-                sb.append("<NULL>");
-            } else if (value instanceof String) {
-                sb.append((String) value);
-            } else if (value instanceof String[]) {
-                final String[] values = (String[]) value;
-                sb.append('[');
-                for (int i = 0; i < values.length; i++) {
-                    if (i > 0) {
-                        sb.append(',');
-                    }
-                    sb.append(values[i]);
-                }
-                sb.append(']');
-            } else {
-                sb.append(value.toString());
-            }
-            sb.append(')');
-            log.trace(sb.toString());
-        }
+//        // Trace logging (if enabled)
+//        if (log.isTraceEnabled()) {
+//            final StringBuilder sb = new StringBuilder("  copyProperty(");
+//            sb.append(bean);
+//            sb.append(", ");
+//            sb.append(name);
+//            sb.append(", ");
+//            if (value == null) {
+//                sb.append("<NULL>");
+//            } else if (value instanceof String) {
+//                sb.append((String) value);
+//            } else if (value instanceof String[]) {
+//                final String[] values = (String[]) value;
+//                sb.append('[');
+//                for (int i = 0; i < values.length; i++) {
+//                    if (i > 0) {
+//                        sb.append(',');
+//                    }
+//                    sb.append(values[i]);
+//                }
+//                sb.append(']');
+//            } else {
+//                sb.append(value.toString());
+//            }
+//            sb.append(')');
+//            log.trace(sb.toString());
+//        }
 
         // Resolve any nested expression to get the actual target bean
         Object target = bean;
@@ -378,10 +343,10 @@ public class BeanUtilsBean {
                 return; // Skip this property setter
             }
         }
-        if (log.isTraceEnabled()) {
-            log.trace("    Target bean = " + target);
-            log.trace("    Target name = " + name);
-        }
+//        if (log.isTraceEnabled()) {
+//            log.trace("    Target bean = " + target);
+//            log.trace("    Target name = " + name);
+//        }
 
         // Declare local variables we will require
         final String propName = resolver.getProperty(name); // Simple name of target property
@@ -411,17 +376,17 @@ public class BeanUtilsBean {
             type = descriptor.getPropertyType();
             if (type == null) {
                 // Most likely an indexed setter on a POJB only
-                if (log.isTraceEnabled()) {
-                    log.trace("    target type for property '" +
-                              propName + "' is null, so skipping ths setter");
-                }
+//                if (log.isTraceEnabled()) {
+//                    log.trace("    target type for property '" +
+//                              propName + "' is null, so skipping ths setter");
+//                }
                 return;
             }
         }
-        if (log.isTraceEnabled()) {
-            log.trace("    target propName=" + propName + ", type=" +
-                      type + ", index=" + index + ", key=" + key);
-        }
+//        if (log.isTraceEnabled()) {
+//            log.trace("    target propName=" + propName + ", type=" +
+//                      type + ", index=" + index + ", key=" + key);
+//        }
 
         // Convert the specified value to the required type and store it
         if (index >= 0) {                    // Destination must be indexed
@@ -503,9 +468,9 @@ public class BeanUtilsBean {
             return (new HashMap<String, String>());
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Describing bean: " + bean.getClass().getName());
-        }
+//        if (log.isDebugEnabled()) {
+//            log.debug("Describing bean: " + bean.getClass().getName());
+//        }
 
         final Map<String, String> description = new HashMap<String, String>();
         if (bean instanceof DynaBean) {
@@ -819,10 +784,10 @@ public class BeanUtilsBean {
         if ((bean == null) || (properties == null)) {
             return;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("BeanUtils.populate(" + bean + ", " +
-                    properties + ")");
-        }
+//        if (log.isDebugEnabled()) {
+//            log.debug("BeanUtils.populate(" + bean + ", " +
+//                    properties + ")");
+//        }
 
         // Loop through the property name/value pairs to be set
         for(final Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
@@ -874,32 +839,32 @@ public class BeanUtilsBean {
         throws IllegalAccessException, InvocationTargetException {
 
         // Trace logging (if enabled)
-        if (log.isTraceEnabled()) {
-            final StringBuilder sb = new StringBuilder("  setProperty(");
-            sb.append(bean);
-            sb.append(", ");
-            sb.append(name);
-            sb.append(", ");
-            if (value == null) {
-                sb.append("<NULL>");
-            } else if (value instanceof String) {
-                sb.append((String) value);
-            } else if (value instanceof String[]) {
-                final String[] values = (String[]) value;
-                sb.append('[');
-                for (int i = 0; i < values.length; i++) {
-                    if (i > 0) {
-                        sb.append(',');
-                    }
-                    sb.append(values[i]);
-                }
-                sb.append(']');
-            } else {
-                sb.append(value.toString());
-            }
-            sb.append(')');
-            log.trace(sb.toString());
-        }
+//        if (log.isTraceEnabled()) {
+//            final StringBuilder sb = new StringBuilder("  setProperty(");
+//            sb.append(bean);
+//            sb.append(", ");
+//            sb.append(name);
+//            sb.append(", ");
+//            if (value == null) {
+//                sb.append("<NULL>");
+//            } else if (value instanceof String) {
+//                sb.append((String) value);
+//            } else if (value instanceof String[]) {
+//                final String[] values = (String[]) value;
+//                sb.append('[');
+//                for (int i = 0; i < values.length; i++) {
+//                    if (i > 0) {
+//                        sb.append(',');
+//                    }
+//                    sb.append(values[i]);
+//                }
+//                sb.append(']');
+//            } else {
+//                sb.append(value.toString());
+//            }
+//            sb.append(')');
+//            log.trace(sb.toString());
+//        }
 
         // Resolve any nested expression to get the actual target bean
         Object target = bean;
@@ -915,10 +880,10 @@ public class BeanUtilsBean {
                 return; // Skip this property setter
             }
         }
-        if (log.isTraceEnabled()) {
-            log.trace("    Target bean = " + target);
-            log.trace("    Target name = " + name);
-        }
+//        if (log.isTraceEnabled()) {
+//            log.trace("    Target bean = " + target);
+//            log.trace("    Target name = " + name);
+//        }
 
         // Declare local variables we will require
         final String propName = resolver.getProperty(name); // Simple name of target property
@@ -954,18 +919,18 @@ public class BeanUtilsBean {
             }
             if (descriptor instanceof MappedPropertyDescriptor) {
                 if (((MappedPropertyDescriptor) descriptor).getMappedWriteMethod() == null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Skipping read-only property");
-                    }
+//                    if (log.isDebugEnabled()) {
+//                        log.debug("Skipping read-only property");
+//                    }
                     return; // Read-only, skip this property setter
                 }
                 type = ((MappedPropertyDescriptor) descriptor).
                     getMappedPropertyType();
             } else if (index >= 0 && descriptor instanceof IndexedPropertyDescriptor) {
                 if (((IndexedPropertyDescriptor) descriptor).getIndexedWriteMethod() == null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Skipping read-only property");
-                    }
+//                    if (log.isDebugEnabled()) {
+//                        log.debug("Skipping read-only property");
+//                    }
                     return; // Read-only, skip this property setter
                 }
                 type = ((IndexedPropertyDescriptor) descriptor).
@@ -974,17 +939,17 @@ public class BeanUtilsBean {
                 type = Object.class;
             } else if (key != null) {
                 if (descriptor.getReadMethod() == null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Skipping read-only property");
-                    }
+//                    if (log.isDebugEnabled()) {
+//                        log.debug("Skipping read-only property");
+//                    }
                     return; // Read-only, skip this property setter
                 }
                 type = (value == null) ? Object.class : value.getClass();
             } else {
                 if (descriptor.getWriteMethod() == null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Skipping read-only property");
-                    }
+//                    if (log.isDebugEnabled()) {
+//                        log.debug("Skipping read-only property");
+//                    }
                     return; // Read-only, skip this property setter
                 }
                 type = descriptor.getPropertyType();
@@ -1088,7 +1053,7 @@ public class BeanUtilsBean {
     protected Object convert(final Object value, final Class<?> type) {
         final Converter converter = getConvertUtils().lookup(type);
         if (converter != null) {
-            log.trace("        USING CONVERTER " + converter);
+//            log.trace("        USING CONVERTER " + converter);
             return converter.convert(type, value);
         } else {
             return value;
@@ -1122,16 +1087,16 @@ public class BeanUtilsBean {
             final Class<?>[] paramsClasses = new Class<?>[] { Throwable.class };
             return Throwable.class.getMethod("initCause", paramsClasses);
         } catch (final NoSuchMethodException e) {
-            final Log log = LogFactory.getLog(org.apache.commons.beanutils.BeanUtils.class);
-            if (log.isWarnEnabled()) {
-                log.warn("Throwable does not have initCause() method in JDK 1.3");
-            }
+//            final Log log = LogFactory.getLog(BeanUtils.class);
+//            if (log.isWarnEnabled()) {
+//                log.warn("Throwable does not have initCause() method in JDK 1.3");
+//            }
             return null;
         } catch (final Throwable e) {
-            final Log log = LogFactory.getLog(BeanUtils.class);
-            if (log.isWarnEnabled()) {
-                log.warn("Error getting the Throwable initCause() method", e);
-            }
+//            final Log log = LogFactory.getLog(BeanUtils.class);
+//            if (log.isWarnEnabled()) {
+//                log.warn("Error getting the Throwable initCause() method", e);
+//            }
             return null;
         }
     }

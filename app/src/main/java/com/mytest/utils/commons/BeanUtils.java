@@ -13,7 +13,7 @@ public class BeanUtils {
         E targetInstance = null;
         try {
             targetInstance = classType.newInstance();
-            copyProperties(source, targetInstance);
+            copyProperties(targetInstance, source);
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {

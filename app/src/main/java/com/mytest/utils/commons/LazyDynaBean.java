@@ -111,13 +111,13 @@ import java.util.Map;
  * @version $Id$
  * @see LazyDynaClass
  */
-public class LazyDynaBean implements org.apache.commons.beanutils.DynaBean, Serializable {
+public class LazyDynaBean implements DynaBean, Serializable {
 
 
-   /**
-    * Commons Logging
-    */
-    private transient Log logger = LogFactory.getLog(LazyDynaBean.class);
+//   /**
+//    * Commons Logging
+//    */
+//    private transient Log logger = LogFactory.getLog(LazyDynaBean.class);
 
     /** BigInteger Zero */
     protected static final BigInteger BigInteger_ZERO = new BigInteger("0");
@@ -179,7 +179,7 @@ public class LazyDynaBean implements org.apache.commons.beanutils.DynaBean, Seri
      *
      * @param dynaClass The DynaClass we are associated with
      */
-    public LazyDynaBean(final org.apache.commons.beanutils.DynaClass dynaClass) {
+    public LazyDynaBean(final DynaClass dynaClass) {
 
         values = newMap();
 
@@ -455,7 +455,7 @@ public class LazyDynaBean implements org.apache.commons.beanutils.DynaBean, Seri
      *
      * @throws IllegalArgumentException if this is not an existing property
      *  name for our DynaClass and the MutableDynaClass is restricted
-     * @throws org.apache.commons.beanutils.ConversionException if the specified value cannot be
+     * @throws ConversionException if the specified value cannot be
      *  converted to the type required for this property
      * @throws NullPointerException if an attempt is made to set a
      *  primitive property to null
@@ -485,7 +485,7 @@ public class LazyDynaBean implements org.apache.commons.beanutils.DynaBean, Seri
                         ("Primitive value for '" + name + "'");
             }
         } else if (!isAssignable(descriptor.getType(), value.getClass())) {
-            throw new org.apache.commons.beanutils.ConversionException
+            throw new ConversionException
                     ("Cannot assign value of type '" +
                     value.getClass().getName() +
                     "' to property '" + name + "' of type '" +
@@ -504,7 +504,7 @@ public class LazyDynaBean implements org.apache.commons.beanutils.DynaBean, Seri
      * @param index Index of the property to be set
      * @param value Value to which this property is to be set
      *
-     * @throws org.apache.commons.beanutils.ConversionException if the specified value cannot be
+     * @throws ConversionException if the specified value cannot be
      *  converted to the type required for this property
      * @throws IllegalArgumentException if there is no property
      *  of the specified name
@@ -768,10 +768,10 @@ public class LazyDynaBean implements org.apache.commons.beanutils.DynaBean, Seri
             return type.newInstance();
         }
         catch (final Exception ex) {
-            if (logger().isWarnEnabled()) {
-                logger().warn("Error instantiating DynaBean property of type '" +
-                        type.getName() + "' for '" + name + "' " + ex);
-            }
+//            if (logger().isWarnEnabled()) {
+//                logger().warn("Error instantiating DynaBean property of type '" +
+//                        type.getName() + "' for '" + name + "' " + ex);
+//            }
             return null;
         }
     }
@@ -840,9 +840,9 @@ public class LazyDynaBean implements org.apache.commons.beanutils.DynaBean, Seri
             return type.newInstance();
         }
         catch (final Exception ex) {
-            if (logger().isWarnEnabled()) {
-                logger().warn("Error instantiating property of type '" + type.getName() + "' for '" + name + "' " + ex);
-            }
+//            if (logger().isWarnEnabled()) {
+//                logger().warn("Error instantiating property of type '" + type.getName() + "' for '" + name + "' " + ex);
+//            }
             return null;
         }
     }
@@ -928,17 +928,17 @@ public class LazyDynaBean implements org.apache.commons.beanutils.DynaBean, Seri
      * @return a new Map instance
      */
     protected Map<String, Object> newMap() {
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
     /**
      * <p>Returns the <code>Log</code>.
      */
-    private Log logger() {
-        if (logger == null) {
-            logger = LogFactory.getLog(LazyDynaBean.class);
-        }
-        return logger;
-    }
+//    private Log logger() {
+//        if (logger == null) {
+//            logger = LogFactory.getLog(LazyDynaBean.class);
+//        }
+//        return logger;
+//    }
 
 }

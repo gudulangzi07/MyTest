@@ -16,9 +16,6 @@
  */
 package com.mytest.utils.commons;
 
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.beanutils.DynaProperty;
-
 /**
  * <p>A <strong>DynaClass</strong> is a simulation of the functionality of
  * <code>java.lang.Class</code> for classes implementing the
