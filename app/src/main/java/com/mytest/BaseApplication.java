@@ -10,6 +10,6 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        CrashHandler.getInstance().init(this);
+//        CrashHandler.getInstance().init(this);
     }
 }

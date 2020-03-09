@@ -69,5 +69,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, ChildRefreshUIActivity.class);
             startActivity(intent);
         });
+
+        findViewById(R.id.button12).setOnClickListener(view->{
+            Intent intent = new Intent(MainActivity.this, OverLayCardActivity.class);
+            startActivity(intent);
+        });
     }
 }
