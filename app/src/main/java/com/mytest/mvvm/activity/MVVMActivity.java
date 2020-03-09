@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.Observable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -47,6 +48,8 @@ public class MVVMActivity extends AppCompatActivity {
         mvvmViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(MVVMViewModel.class);
         mvvmViewModel.setmActivity(this);
         activityMvvmBinding.setMvvmViewModel(mvvmViewModel);
+
+        mvvmViewModel.getData(0, 10);
 
         mvvmViewModel.getLists().observe(this, lists -> {
             mvvmAdapter.setmLists(lists);

@@ -10,6 +10,7 @@ import com.mytest.mvvm.model.MVVMModel;
 import com.mytest.utils.beans.BeanUtils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,16 +59,21 @@ public class MVVMViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(Long aLong) {
-                        MVVMModel mvvmModel = com.mytest.utils.commons.BeanUtils.clone(mvvmdb, MVVMModel.class);
-                        System.out.println("==================" + mvvmModel.getId());
-                        System.out.println("==================" + mvvmModel.getTitle());
-                        System.out.println("==================" + mvvmModel.getCreateTime());
-
-//                        MVVMModel mvvmModel = BeanUtils.clone(mvvmdb, MVVMModel.class);
+//                        MVVMModel mvvmModel = com.mytest.utils.commons.BeanUtils.clone(mvvmdb, MVVMModel.class);
 //                        System.out.println("==================" + mvvmModel.getId());
 //                        System.out.println("==================" + mvvmModel.getTitle());
 //                        System.out.println("==================" + mvvmModel.getCreateTime());
-//                        lists.getValue().add(mvvmModel);
+
+
+                        MVVMModel mvvmModel = BeanUtils.clone(mvvmdb, MVVMModel.class);
+                        System.out.println("==================" + mvvmModel.getId());
+                        System.out.println("==================" + mvvmModel.getTitle());
+                        System.out.println("==================" + mvvmModel.getCreateTime());
+                        lists.getValue().add(mvvmModel);
+//                        List<MVVMModel> list = new ArrayList<>();
+//                        list.add(mvvmModel);
+//
+//                        lists.postValue(list);
                     }
 
                     @Override
