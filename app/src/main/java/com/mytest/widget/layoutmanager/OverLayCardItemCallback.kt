@@ -45,6 +45,17 @@ class OverLayCardItemCallback @JvmOverloads constructor(
 
     override fun onChildDraw(canvas: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
         super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+
+        //当前移动的item进行缩放与透明化
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            val value = 1 - abs(dX) / viewHolder.itemView.width
+            viewHolder.itemView.alpha = value
+            viewHolder.itemView.scaleY = value
+        }
+
+        val childCount = recyclerView.childCount
+        Log.d("onChildDraw", "$childCount")
+
         //根据滑动的dx与dy，算出现在动画的比例系数
 //        val swipedValue = sqrt(dX * dX + dY * dY)
 //        var fraction = swipedValue / getThreshold(viewHolder)
@@ -68,11 +79,7 @@ class OverLayCardItemCallback @JvmOverloads constructor(
 //            }
 //        }
 
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            val value = 1 - abs(dX) / viewHolder.itemView.width
-            viewHolder.itemView.alpha = value
-            viewHolder.itemView.scaleY = value
-        }
+
     }
 
     private fun getDisplayMetrics(context: Context): Int{
