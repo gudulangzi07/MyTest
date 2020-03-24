@@ -115,6 +115,14 @@
             android:text="跳转到OverLayCardActivity"
             android:textAllCaps="false"
             android:layout_margin="10dp"/>
+
+        <Button
+            android:id="@+id/button13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="跳转到ServiceActivity"
+            android:textAllCaps="false"
+            android:layout_margin="10dp"/>
     </LinearLayout>
 
 </ScrollView>

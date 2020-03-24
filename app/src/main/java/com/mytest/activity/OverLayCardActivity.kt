@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.mytest.R
+import com.mytest.widget.layoutmanager.MyLayoutManager
 import com.mytest.widget.layoutmanager.OverLayCardAdapter
 import com.mytest.widget.layoutmanager.OverLayCardLayoutManager
 //import com.mytest.widget.layoutmanagerjava.CardConfig
@@ -23,7 +24,9 @@ class OverLayCardActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_over_lay_card)
 
-        val layoutManager = OverLayCardLayoutManager()
+//        val layoutManager = OverLayCardLayoutManager()
+
+        val layoutManager = MyLayoutManager(50)
 
         val lists = setData()
         adapter = OverLayCardAdapter(lists)
@@ -33,9 +36,9 @@ class OverLayCardActivity: AppCompatActivity() {
 
         //初始化配置
 //        CardConfig.initConfig(this)
-        val callback = OverLayCardItemCallback(0, ItemTouchHelper.LEFT, recyclerView, adapter!!, lists as MutableList<Any>)
-        val itemTouchHelper = ItemTouchHelper(callback)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+//        val callback = OverLayCardItemCallback(0, ItemTouchHelper.LEFT, recyclerView, adapter!!, lists as MutableList<Any>)
+//        val itemTouchHelper = ItemTouchHelper(callback)
+//        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun setData(): MutableList<String>{

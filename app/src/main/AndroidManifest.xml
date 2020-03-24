@@ -35,6 +35,13 @@
             android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity android:name=".activity.ChildRefreshUIActivity"/>
         <activity android:name=".activity.OverLayCardActivity"/>
+        <activity android:name=".activity.ServiceActivity"/>
+        <activity android:name=".activity.ServiceActivity2"/>
+
+        <service
+            android:name=".service.MyService"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>
