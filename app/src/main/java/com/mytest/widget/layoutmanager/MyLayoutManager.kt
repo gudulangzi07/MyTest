@@ -3,8 +3,9 @@ package com.mytest.widget.layoutmanager
 import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.abs
 
-class MyLayoutManager constructor(val offset: Int): RecyclerView.LayoutManager()  {
+class MyLayoutManager constructor(private val offset: Int): RecyclerView.LayoutManager()  {
 
     companion object{
         const val TAG = "MyLayoutManager"
@@ -71,7 +72,13 @@ class MyLayoutManager constructor(val offset: Int): RecyclerView.LayoutManager()
             return 0
         }
 
-        return super.scrollHorizontallyBy(dx, recycler, state)
+        recycler?.let {
+            //手指滑动的item布局，每次滑动的都是处于最上层的view
+            moveChildView(it, dx)
+
+        }
+
+        return dx
     }
 
     override fun onScrollStateChanged(state: Int) {
@@ -87,6 +94,28 @@ class MyLayoutManager constructor(val offset: Int): RecyclerView.LayoutManager()
     }
 
     private fun drawChildView(recycler: RecyclerView.Recycler, state: RecyclerView.State?) {
+        for (position in 0 until itemCount){
+            val itemView = recycler.getViewForPosition(position)
+            measureChildWithMargins(itemView, 0, 0)
+            addView(itemView, 0)
+            //在RecyclerView中展示itemView
+            layoutDecoratedWithMargins(itemView, 0, 0, itemView.measuredWidth, itemView.measuredHeight)
+            //X方向移动
+            itemView.translationX = (offset * position).toFloat()
+            //Y方向根据现实的item进行比例缩放
+            itemView.scaleY = 1 - 0.09f * position
+        }
+    }
 
+    private fun moveChildView(recycler: RecyclerView.Recycler, distance: Int = 0){
+        val moveView = recycler.getViewForPosition(0)
+        measureChildWithMargins(moveView, 0, 0)
+        if (distance > moveView.measuredWidth / 2){
+            removeView(moveView)
+        }
+        layoutDecoratedWithMargins(moveView, 0 - distance, 0, moveView.measuredWidth - distance, moveView.measuredHeight)
+        moveView.translationX = distance.toFloat()
+        moveView.scaleY = (1 - distance / moveView.measuredWidth).toFloat()
+        moveView.alpha = (1 - distance / moveView.measuredWidth).toFloat()
     }
 }
