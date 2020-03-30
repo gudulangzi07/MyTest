@@ -77,11 +77,11 @@ class OverLayCardLayoutManager: RecyclerView.LayoutManager() {
 
             detachAndScrapAttachedViews(it)
 
-            layoutItems(it, state, positionCount)
+            layoutItems(it, state, positionCount, itemCount)
         }
     }
 
-    private fun layoutItems(recycler: RecyclerView.Recycler, state: RecyclerView.State?, positionCount: Int) {
+    private fun layoutItems(recycler: RecyclerView.Recycler, state: RecyclerView.State?, positionCount: Int, itemCount: Int) {
         state?.let {
             if (it.isPreLayout){
                 return@layoutItems
@@ -93,12 +93,20 @@ class OverLayCardLayoutManager: RecyclerView.LayoutManager() {
                 addView(itemView, 0)
                 layoutItem(itemView, mItemFrames[position], position)
             }
+
+            for (position in positionCount until itemCount){
+                Log.d("OverLay", "执行了item回收操作")
+                val itemView = recycler.getViewForPosition(position)
+                //展示区域以外的item需要回收
+                removeAndRecycleView(itemView, recycler)
+            }
         }
     }
 
     private fun layoutItem(itemView: View, rect: Rect?, position: Int) {
         rect?.let {
-            layoutDecorated(itemView, it.left, it.top, it.right, it.bottom)
+            //在RecyclerView中展示itemView
+            layoutDecoratedWithMargins(itemView, it.left, it.top, it.right, it.bottom)
             //X方向不缩放
             itemView.scaleX = 1f
             //Y方向根据现实的item进行比例缩放

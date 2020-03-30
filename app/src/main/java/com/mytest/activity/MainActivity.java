@@ -76,6 +76,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.button13).setOnClickListener(view->{
+            Intent intent = new Intent(MainActivity.this, ServiceActivity.class);
+            startActivity(intent);
+        });
+
+        findViewById(R.id.button14).setOnClickListener(view->{
             Intent intent = new Intent(MainActivity.this, MyFragmentActivity.class);
             startActivity(intent);
         });
