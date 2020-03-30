@@ -35,6 +35,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity android:name=".activity.ChildRefreshUIActivity"/>
         <activity android:name=".activity.OverLayCardActivity"/>
+        <activity android:name=".activity.MyFragmentActivity"/>
     </application>
 
 </manifest>

@@ -74,5 +74,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, OverLayCardActivity.class);
             startActivity(intent);
         });
+
+        findViewById(R.id.button13).setOnClickListener(view->{
+            Intent intent = new Intent(MainActivity.this, MyFragmentActivity.class);
+            startActivity(intent);
+        });
     }
 }
