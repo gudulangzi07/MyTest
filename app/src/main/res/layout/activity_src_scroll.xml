@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mytest.widget.SrcScrollFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vSrcScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:srcMaskLayoutColor="#80000000"
+    app:srcDrawable="@mipmap/src_scroll">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/vBtnStart"
+        android:layout_width="220dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="200dp"
+        android:text="开始滚动"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/vBtnStop"
+        android:layout_width="220dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="140dp"
+        android:text="停止滚动"/>
+</com.mytest.widget.SrcScrollFrameLayout>
