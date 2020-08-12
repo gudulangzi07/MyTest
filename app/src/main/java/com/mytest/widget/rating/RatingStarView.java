@@ -81,9 +81,9 @@ public class RatingStarView extends View implements View.OnClickListener {
         strokeColor = typedArray.getColor(R.styleable.RatingStarView_strokeColor, strokeColor);
         starForegroundColor = typedArray.getColor(R.styleable.RatingStarView_starForegroundColor, starForegroundColor);
         starBackgroundColor = typedArray.getColor(R.styleable.RatingStarView_starBackgroundColor, starBackgroundColor);
-        cornerRadius = typedArray.getDimension(R.styleable.RatingStarView_cornerRadius, cornerRadius);
+        cornerRadius = typedArray.getDimension(R.styleable.RatingStarView_mCornerRadius, cornerRadius);
         starMargin = typedArray.getDimension(R.styleable.RatingStarView_starMargin, starMargin);
-        strokeWidth = typedArray.getDimension(R.styleable.RatingStarView_strokeWidth, strokeWidth);
+        strokeWidth = typedArray.getDimension(R.styleable.RatingStarView_mStrokeWidth, strokeWidth);
         starThicknessFactor = typedArray.getFloat(R.styleable.RatingStarView_starThickness, starThicknessFactor);
         rating = typedArray.getFloat(R.styleable.RatingStarView_rating, rating);
         starNum = typedArray.getInteger(R.styleable.RatingStarView_starNum, starNum);

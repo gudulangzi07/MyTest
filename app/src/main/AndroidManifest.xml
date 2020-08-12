@@ -43,6 +43,7 @@
             android:name=".service.MyService"
             android:exported="true">
         </service>
+        <activity android:name=".activity.MyFragmentActivity"/>
     </application>
 
 </manifest>
