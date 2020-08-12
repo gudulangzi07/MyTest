@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        findViewById(R.id.button14).setOnClickListener(view->{
+        findViewById(R.id.button15).setOnClickListener(view->{
             Intent intent = new Intent(MainActivity.this, SrcScrollActivity.class);
             startActivity(intent);
         });
