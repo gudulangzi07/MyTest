@@ -3,6 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+Properties properties = new Properties()
+def path = getRootProject().file("/signingConfig/signing.properties")
+properties.load(new FileInputStream(path))
+
 android {
 
     compileSdkVersion 30
@@ -27,13 +31,13 @@ android {
     signingConfigs {
         debug {
             //keystore的文件路径，可以是绝对路径也可以是相对路径
-            storeFile file('E:/key/mytest.jks')
+            storeFile file(properties['KEY_PAHT'])
             //keystore的密码
-            storePassword 'mytest'
+            storePassword properties['KEY_STORE_PASSWORD']
             //keystore中key的别名
-            keyAlias 'mytest'
+            keyAlias properties['KEY_ALIAS']
             //keystore中key的密码
-            keyPassword 'mytest'
+            keyPassword properties['KEY_PASSWORD']
         }
     }
 
@@ -49,6 +53,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
+            signingConfig signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
