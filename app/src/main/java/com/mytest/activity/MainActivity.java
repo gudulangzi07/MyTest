@@ -89,5 +89,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, SrcScrollActivity.class);
             startActivity(intent);
         });
+
+        findViewById(R.id.button16).setOnClickListener(view->{
+            Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+            startActivity(intent);
+        });
     }
 }

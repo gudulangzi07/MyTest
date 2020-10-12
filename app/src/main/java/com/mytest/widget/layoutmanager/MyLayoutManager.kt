@@ -43,6 +43,7 @@ class MyLayoutManager constructor(private val offset: Int): RecyclerView.LayoutM
             //分离全部已有的View放入临时缓存
             detachAndScrapAttachedViews(it)
 
+            //item布局
             drawChildView(it, state)
         }
     }
@@ -54,12 +55,12 @@ class MyLayoutManager constructor(private val offset: Int): RecyclerView.LayoutM
         return true
     }
 
-    /**
-     * 返回true，表示能上下滑动，返回false表示禁用上下滑动
-     * */
-    override fun canScrollVertically(): Boolean {
-        return super.canScrollVertically()
-    }
+//    /**
+//     * 返回true，表示能上下滑动，返回false表示禁用上下滑动
+//     * */
+//    override fun canScrollVertically(): Boolean {
+//        return super.canScrollVertically()
+//    }
 
     /**
      * 水平滑动
@@ -74,7 +75,6 @@ class MyLayoutManager constructor(private val offset: Int): RecyclerView.LayoutM
         recycler?.let {
             //手指滑动的item布局，每次滑动的都是处于最上层的view
             moveChildView(it, dx)
-
         }
 
         return dx

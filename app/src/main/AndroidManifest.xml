@@ -38,6 +38,7 @@
         <activity android:name=".activity.ServiceActivity"/>
         <activity android:name=".activity.ServiceActivity2"/>
         <activity android:name=".activity.SrcScrollActivity"/>
+        <activity android:name=".activity.WebViewActivity"/>
 
         <service
             android:name=".service.MyService"
