@@ -94,5 +94,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
             startActivity(intent);
         });
+
+        findViewById(R.id.button17).setOnClickListener(view->{
+            Intent intent = new Intent(MainActivity.this, OcrActivity.class);
+            startActivity(intent);
+        });
     }
 }
