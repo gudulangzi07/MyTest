@@ -2,11 +2,10 @@ package com.mytest.activity
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -16,11 +15,12 @@ import com.baidu.ocr.sdk.OCR
 import com.baidu.ocr.sdk.OnResultListener
 import com.baidu.ocr.sdk.exception.OCRError
 import com.baidu.ocr.sdk.model.AccessToken
-import com.baidu.ocr.sdk.model.GeneralBasicParams
 import com.baidu.ocr.sdk.model.GeneralParams
 import com.baidu.ocr.sdk.model.GeneralResult
 import com.mytest.R
 import com.mytest.utils.FileUtil
+import com.mytest.utils.PermissionUtils
+import com.mytest.utils.camera.Camera2Helper
 import kotlinx.android.synthetic.main.activity_ocr.*
 import java.io.File
 import java.io.FileInputStream
@@ -28,7 +28,14 @@ import java.io.FileInputStream
 class OcrActivity: AppCompatActivity() {
     private var hasGotToken = false
 
+    private val permissionsList = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE)
+
     private var alertDialog: AlertDialog.Builder? = null
+
+    private lateinit var mCamera2Helper: Camera2Helper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,24 +48,32 @@ class OcrActivity: AppCompatActivity() {
         //initAccessToken()
         initAccessTokenWithAkSk()
 
-        btn_orc.setOnClickListener {
-            if(checkTokenStatus()){
-                recWebimage(this, "${Environment.getExternalStorageDirectory()}/app/image/pic.jpg")
-            }
-        }
+//        btn_orc.setOnClickListener {
+//            if(checkTokenStatus()){
+//                recWebimage(this, "${Environment.getExternalStorageDirectory()}/app/image/pic.jpg")
+//            }
+//        }
+//
 
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-                //没有权限则申请权限
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1);
-            }else {
-                //有权限直接执行,docode()不用做处理
-                copyAssetsToSDCard()
-            }
-        }else {
-            //小于6.0，不用申请权限，直接执行
-            copyAssetsToSDCard()
+        PermissionUtils.checkPermission(this, permissionsList) {
+            mCamera2Helper = Camera2Helper(this, textureView)
+
+            mCamera2Helper.setSavePicCallback(object : Camera2Helper.SavePicCallback {
+                override fun savePicSuccess(path: String) {
+                    recWebImage(this@OcrActivity, path)
+                }
+            })
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                mCamera2Helper.takePic()
+            }, 2000)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mCamera2Helper.releaseCamera()
+        mCamera2Helper.releaseThread()
     }
 
     /**
@@ -113,11 +128,11 @@ class OcrActivity: AppCompatActivity() {
         return hasGotToken
     }
 
-    fun recWebimage(ctx: Context?, filePath: String?) {
-        val param: GeneralParams = GeneralParams()
+    fun recWebImage(ctx: Context?, filePath: String) {
+        val param = GeneralParams()
         param.setDetectDirection(true)
-        param.setVertexesLocation(true);
-        param.setRecognizeGranularity(GeneralParams.GRANULARITY_SMALL);
+        param.setVertexesLocation(true)
+        param.setRecognizeGranularity(GeneralParams.GRANULARITY_SMALL)
         param.imageFile = File(filePath)
         OCR.getInstance(ctx).recognizeAccurateBasic(param, object : OnResultListener<GeneralResult> {
             override fun onResult(result: GeneralResult) {
@@ -136,14 +151,14 @@ class OcrActivity: AppCompatActivity() {
         })
     }
 
-    private fun copyAssetsToSDCard(){
-        FileUtil(applicationContext).copyAssetsToSD("image", "app/image")?.setFileOperateCallback(object : FileUtil.FileOperateCallback {
-            override fun onSuccess() {
-                val fis = FileInputStream("${Environment.getExternalStorageDirectory()}/app/image/pic.jpg")
-                iv_image.setImageBitmap(BitmapFactory.decodeStream(fis))
-            }
-
-            override fun onFailed(error: String?) {}
-        })
-    }
+//    private fun copyAssetsToSDCard(){
+//        FileUtil(applicationContext).copyAssetsToSD("image", "app/image")?.setFileOperateCallback(object : FileUtil.FileOperateCallback {
+//            override fun onSuccess() {
+//                val fis = FileInputStream("${Environment.getExternalStorageDirectory()}/app/image/pic.jpg")
+//                iv_image.setImageBitmap(BitmapFactory.decodeStream(fis))
+//            }
+//
+//            override fun onFailed(error: String?) {}
+//        })
+//    }
 }
