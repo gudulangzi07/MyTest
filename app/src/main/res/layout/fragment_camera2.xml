@@ -5,22 +5,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextureView
-        android:id="@+id/textureView"
+        android:id="@+id/vTextureView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_height="match_parent"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_txt"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnTakePic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:text="sssss"
-        android:textColor="@color/color_48afb6"
+        android:text="拍照"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
